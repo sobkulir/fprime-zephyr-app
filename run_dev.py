@@ -4,7 +4,7 @@ import argparse
 import subprocess
 from pathlib import Path
 
-DEFAULT_IMAGE = 'rsobkuliak/fprime-zephyr:0.0.1'
+DEFAULT_IMAGE = 'rsobkuliak/fprime-zephyr:0.0.2'
 
 # Parent directory of current working directory
 DEFAULT_PROJECT_DIR = '../'
@@ -76,6 +76,7 @@ def main():
          '-v', f'{project_dir_abs}:/zephyr-workspace',
          '-v', f'{bash_history_abs}:/home/user/.bash_history',
          '--hostname', 'fprime',
+         '--network', 'host',
          args.image,
          ],
         check=False)

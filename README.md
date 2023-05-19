@@ -45,3 +45,11 @@ If you have a board, e.g., `nucleo_h723zg`:
 rm -rf build && west build -b nucleo_h723zg fprime/MyDeployment/
 sudo west flash
 ```
+
+## Helpers
+
+Deleting Autocoder generated files
+
+```
+ls -d fprime/Autocoders/Python/src/fprime_ac/generators/templates/**/**.py | sed '/.*__init__.py/d' | xargs -I{} rm -r "{}"
+```

@@ -9,6 +9,8 @@ if (${CMAKE_SYSTEM_NAME} STREQUAL "Zephyr")
         # Common implementations
         "${FPRIME_FRAMEWORK_PATH}/Os/Pthreads/BufferQueueCommon.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/BufferQueue.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/Mutex.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/Queue.cpp"
     )
     register_fprime_module(fprime-zephyr_Os)
 endif()

@@ -24,11 +24,14 @@ project(MyDeployment VERSION 1.0.0 LANGUAGES C CXX)
 # F' Core Setup
 # This includes all of the F prime core components, and imports the make-system.
 ###
+# Needed for using patched fpp-to-cpp.
+set(FPRIME_SKIP_TOOLS_VERSION_CHECK ON)
 set(FPRIME_FRAMEWORK_PATH "${CMAKE_CURRENT_LIST_DIR}/../fprime" CACHE PATH "Location of F prime framework" FORCE)
 set(FPRIME_PROJECT_ROOT "${CMAKE_CURRENT_LIST_DIR}/.." CACHE PATH "Root path of F prime project" FORCE)
 include("${FPRIME_FRAMEWORK_PATH}/cmake/FPrime.cmake")
 # NOTE: register custom targets between these two lines
 include("${FPRIME_FRAMEWORK_PATH}/cmake/FPrime-Code.cmake")
+
 
 ###
 # Components and Topology

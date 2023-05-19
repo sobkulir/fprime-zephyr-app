@@ -25,6 +25,11 @@
 // UN, IN, and FN types we see in fprime code.
 #include <inttypes.h>
 #include <stdint.h>
+#include <zephyr/kernel_structs.h>
+#include <zephyr/arch/cpu.h>
+#include <zephyr/kernel/thread.h>
+
+typedef k_tid_t TaskIdRepr;
 
 // Define what types and checks are supported by this platform.
 // TODO: This should be propagated from Zephyr, but as of F Prime v3.2.0,
