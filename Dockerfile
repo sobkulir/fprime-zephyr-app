@@ -57,7 +57,7 @@ RUN python3 -m pip install -U pip && \
     pip3 install -U wheel setuptools && \
     pip3 install \
         -r https://raw.githubusercontent.com/zephyrproject-rtos/zephyr/zephyr-v3.3.0/scripts/requirements.txt \
-        -r https://raw.githubusercontent.com/nasa/fprime/v3.2.0/requirements.txt \
+        -r https://raw.githubusercontent.com/nasa/fprime/devel/requirements.txt \
         west && \
     pip3 check
 
@@ -95,8 +95,7 @@ RUN apt-get install --no-install-recommends -y apt-transport-https gnupg -yqq &&
     curl -sL "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x2EE0EA64E40A89B84B2DF73499E82A75642AC823" | gpg --no-default-keyring --keyring gnupg-ring:/etc/apt/trusted.gpg.d/scalasbt-release.gpg --import && \
     chmod 644 /etc/apt/trusted.gpg.d/scalasbt-release.gpg && \
     apt-get update && \
-    apt-get install sbt && \
-    mkdir /home/user/bin
+    apt-get install sbt
 
 # Prepend the user's bin to override global fpp-* binaries.
 ENV PATH="/home/user/bin:${PATH}"

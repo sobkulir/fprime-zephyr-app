@@ -70,7 +70,7 @@ module MyDeployment {
   instance tlmSend: Svc.TlmChan base id 0x0C00 \
     queue size Default.QUEUE_SIZE \
     stack size Default.STACK_SIZE \
-    priority 97
+    priority 2
 
   # #instance tlmSend: Svc.TlmPacketizer base id 0x0C00 \
   # #    queue size Default.QUEUE_SIZE \

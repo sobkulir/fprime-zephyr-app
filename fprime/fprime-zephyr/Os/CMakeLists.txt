@@ -11,6 +11,7 @@ if (${CMAKE_SYSTEM_NAME} STREQUAL "Zephyr")
         "${CMAKE_CURRENT_LIST_DIR}/BufferQueue.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Mutex.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Queue.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/Task.cpp"
     )
     register_fprime_module(fprime-zephyr_Os)
 endif()
