@@ -46,6 +46,8 @@ namespace Os {
         k_tid_t tid = k_thread_create(thread, reinterpret_cast<k_thread_stack_t *>(stack), stackSize, zephyrEntryWrapper, &this->m_routineWrapper, nullptr, nullptr, priority, K_FP_REGS, K_NO_WAIT);
         this->m_handle = reinterpret_cast<POINTER_CAST>(tid);
 
+        // Uncomment to allow threads allocating memory from kernel heap.
+        // k_thread_system_pool_assign(thread);
         return TASK_OK;
     }
 

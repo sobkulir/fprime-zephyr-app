@@ -30,4 +30,7 @@ if (${CMAKE_SYSTEM_NAME} STREQUAL "Zephyr")
     add_dependencies(Os fprime-zephyr_Os)
     target_link_libraries(Os PRIVATE fprime-zephyr_Os)
     target_link_libraries(fprime-zephyr_Os PRIVATE Os)
+    # Resolves linking errors with `k_msgq_*` functions, but not sure why.
+    # See: https://github.com/zephyrproject-rtos/zephyr/issues/31613
+    target_link_libraries(fprime-zephyr_Os PRIVATE kernel)
 endif()
