@@ -3,3 +3,5 @@
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/fprime-zephyr")
 
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Components/HelloWorld/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Components/ZephyrTimer/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Components/ZephyrUartDriver/")

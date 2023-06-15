@@ -39,27 +39,6 @@ namespace MyDeployment {
 void setupTopology(const TopologyState& state);
 
 /**
- * \brief teardown the F´ topology
- *
- * Tears down the F´ topology in preparation for shutdown. This is done via a series of steps, some provided by
- * autocoded functions, and others provided via the function implementation. These steps are:
- *
- *   1. Call the autocoded `stopTasks()` function to stop the tasks started by `startTasks()` (active components)
- *   2. Call the autocoded `freeThreads()` function to join to the tasks started by `startTasks()`
- *   3. Stop the tasks not owned by active components
- *   4. Join to the tasks not owned by active components
- *   5. Deallocate other resources
- *
- * Step 1, 2, 3, and 4 must occur in-order as the tasks must be stopped before being joined. These tasks must be stopped
- * and joined before any active resources may be deallocated.
- *
- * For an explanation of the required type MyDeployment::TopologyState see: MyDeploymentTopologyDefs.hpp.
- *
- * \param state: state object provided to setupTopology
- */
-void teardownTopology(const TopologyState& state);
-
-/**
  * \brief cycle the rate group driver at a crude rate
  *
  * The reference topology does not have a true 1Hz input clock for the rate group driver because it is designed to
@@ -75,12 +54,6 @@ void teardownTopology(const TopologyState& state);
  */
 void startSimulatedCycle(U32 milliseconds = 1000);
 
-/**
- * \brief stop the simulated cycle started by startSimulatedCycle
- *
- * This stops the cycle started by startSimulatedCycle.
- */
-void stopSimulatedCycle();
 
 } // namespace MyDeployment
 #endif

@@ -49,6 +49,12 @@ rm -rf build && west build -b nucleo_h723zg fprime/MyDeployment/
 sudo west flash
 ```
 
+Running `fprime-gds` over UART:
+```
+sudo fprime-gds --uart-device /dev/ttyUSB0 --uart-baud 115200 --dictionary build/MyDeployment/Top/MyDeploymentTopologyAppDictionary.xml -n --comm-adapter uart
+
+```
+
 ## Helpers
 
 Deleting Autocoder generated files

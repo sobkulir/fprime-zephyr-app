@@ -16,7 +16,7 @@ namespace Os {
     Queue::Queue() : m_handle(0) {}
 
     Queue::QueueStatus Queue::createInternal(const Fw::StringBase &name, NATIVE_INT_TYPE depth, NATIVE_INT_TYPE msgSize) {
-        this->m_name = "/QP_";
+        this->m_name = "/Q_";
         this->m_name += name;
         
         if (msgSize > static_cast<NATIVE_INT_TYPE>(ZEPHYR_Q_MAX_MSG_SIZE)) {
@@ -57,7 +57,6 @@ namespace Os {
             return QUEUE_EMPTY_BUFFER;
         }
 
-        //Fail if there is a size miss-match
         if (size < 0 || size > this->getMsgSize()) {
             return QUEUE_SIZE_MISMATCH;
         }
@@ -67,12 +66,12 @@ namespace Os {
         U8 tmp_buf[ZEPHYR_Q_MAX_MSG_SIZE];
         tmp_buf[0] = size;
         memcpy(&tmp_buf[1], buffer, size);
-        NATIVE_INT_TYPE ret = k_msgq_put(msgq, buffer, (block == QUEUE_BLOCKING) ? K_FOREVER : K_NO_WAIT);
+        NATIVE_INT_TYPE ret = k_msgq_put(msgq, tmp_buf, (block == QUEUE_BLOCKING) ? K_FOREVER : K_NO_WAIT);
 
         if (ret != 0) {
             switch (block) {
                 case QUEUE_BLOCKING:
-                    FW_ASSERT(0, ret); // No shall occur for blocking send
+                    FW_ASSERT(0, ret); // Nonzero return shall not occur for blocking send
                     return QUEUE_SEND_ERROR;
                 case QUEUE_NONBLOCKING:
                     FW_ASSERT(ret != -EAGAIN, ret); // EAGAIN means timeout expired, shall not occur
@@ -109,7 +108,7 @@ namespace Os {
         if (ret != 0) {
             switch (block) {
                 case QUEUE_BLOCKING:
-                    FW_ASSERT(0, ret); // No shall occur for blocking send
+                    FW_ASSERT(0, ret); // Nonzero return shall not occur for blocking receive
                     return QUEUE_RECEIVE_ERROR;
                 case QUEUE_NONBLOCKING:
                     FW_ASSERT(ret != -EAGAIN, ret); // EAGAIN means timeout expired, shall not occur

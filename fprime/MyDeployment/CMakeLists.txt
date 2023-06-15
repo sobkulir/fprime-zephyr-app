@@ -20,6 +20,8 @@ find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 set(CMAKE_SYSTEM_NAME "Zephyr")
 project(MyDeployment VERSION 1.0.0 LANGUAGES C CXX)
 
+# zephyr_compile_options(-fcallgraph-info=su,da)
+
 ###
 # F' Core Setup
 # This includes all of the F prime core components, and imports the make-system.

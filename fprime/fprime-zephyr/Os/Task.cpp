@@ -1,5 +1,6 @@
 #include <Os/Task.hpp>
 #include <Fw/Types/Assert.hpp>
+
 #include <zephyr/kernel.h>
 
 namespace Os {
@@ -25,7 +26,7 @@ namespace Os {
         FW_ASSERT(cpuAffinity == Task::TASK_DEFAULT); // Zephyr SMP support is not implemented.
         FW_ASSERT(routine);
 
-        this->m_name = "TV_";
+        this->m_name = "T_";
         this->m_name += name;
         this->m_identifier = identifier;
         this->m_started = false;

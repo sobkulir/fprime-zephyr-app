@@ -38,18 +38,14 @@ namespace Components {
       // Handler implementations for user-defined typed input ports
       // ----------------------------------------------------------------------
 
-      //! Handler implementation for comIn
-      //!
-      void comIn_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          Fw::ComBuffer &data, /*!< 
-      Buffer containing packet data
-      */
-          U32 context /*!< 
-      Call context value; meaning chosen by user
-      */
+      void schedIn_handler(
+          const NATIVE_INT_TYPE portNum,
+          NATIVE_UINT_TYPE context
       );
 
+      void TOGGLE_LED_cmdHandler(FwOpcodeType opCode, U32 cmdSeq);
+      
+      U32 m_greetingCount;
 
     };
 

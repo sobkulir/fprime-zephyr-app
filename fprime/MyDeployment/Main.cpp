@@ -8,13 +8,11 @@
 #include <zephyr/kernel.h>
 
 int main() {
-    // Object for communicating state to the reference topology
     MyDeployment::TopologyState inputs;
-    inputs.hostname = "";
-    inputs.port = 3;
 
     printk("Setting up topology\n");
     MyDeployment::setupTopology(inputs);
-    printk("Setting up topology -- Done\n");
+    printk("Topology running, entering simulatedCycle.\n");
+    startSimulatedCycle(200);
     return 0;
 }

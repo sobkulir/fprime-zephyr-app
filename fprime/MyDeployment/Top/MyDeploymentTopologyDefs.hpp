@@ -20,12 +20,10 @@ namespace MyDeployment {
  *
  * The topology autocoder requires an object that carries state with the name `MyDeployment::TopologyState`. Only the type
  * definition is required by the autocoder and the contents of this object are otherwise opaque to the autocoder. The
- * contents are entirely up to the definition of the project. This reference application specifies hostname and port
- * fields, which are derived by command line inputs.
+ * contents are entirely up to the definition of the project.
  */
 struct TopologyState {
-    const char* hostname;
-    U32 port;
+
 };
 
 /**

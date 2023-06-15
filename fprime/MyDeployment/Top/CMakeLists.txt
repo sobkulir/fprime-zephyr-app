@@ -18,6 +18,7 @@ set(MOD_DEPS
   # Drv/Udp
   # Drv/TcpClient
   Components/HelloWorld
+  Components/ZephyrUartDriver
 )
 
 register_fprime_module()
