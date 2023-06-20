@@ -47,7 +47,10 @@ void serial_cb(const struct device *dev, void *user_data)
 
     irq_data->rx_buf[0] = irq_data->rx_buf_pos - 1;
     if (irq_data->rx_buf_pos > 1) {
-        k_msgq_put(irq_data->msgq, irq_data->rx_buf, K_NO_WAIT);
+        int ret = k_msgq_put(irq_data->msgq, irq_data->rx_buf, K_NO_WAIT);
+        if (ret < 0) {
+            printk("UART receive queue full\n");
+        }
     }
 }
 
