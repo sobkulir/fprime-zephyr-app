@@ -4,8 +4,10 @@
 #include <zephyr/kernel.h>
 #include <cstring>
 
+#define ZEPHYR_Q_MAX_MSG_SIZE 256
 // U8 is reserved for the message size
-#define ZEPHYR_Q_MAX_MSG_SIZE (256 - sizeof(U8))
+#define ZEPHYR_Q_RESERVED (sizeof(U8))
+#define ZEPHYR_Q_MAX_USER_MSG_SIZE (ZEPHYR_Q_MAX_MSG_SIZE - ZEPHYR_Q_RESERVED)
 
 // Warnings: 1) Priorities are ignored
 //           2) Max message size is ZEPHYR_Q_MAX_MSG_SIZE
@@ -19,7 +21,7 @@ namespace Os {
         this->m_name = "/Q_";
         this->m_name += name;
         
-        if (msgSize > static_cast<NATIVE_INT_TYPE>(ZEPHYR_Q_MAX_MSG_SIZE)) {
+        if (msgSize > static_cast<NATIVE_INT_TYPE>(ZEPHYR_Q_MAX_USER_MSG_SIZE)) {
             return QUEUE_SIZE_MISMATCH;
         }
 
@@ -28,7 +30,8 @@ namespace Os {
             return QUEUE_UNINITIALIZED;
         }
         
-        NATIVE_INT_TYPE ret = k_msgq_alloc_init(msgq, msgSize, depth);
+        FW_ASSERT(msgSize + ZEPHYR_Q_RESERVED <= ZEPHYR_Q_MAX_MSG_SIZE, msgSize);
+        NATIVE_INT_TYPE ret = k_msgq_alloc_init(msgq, msgSize + ZEPHYR_Q_RESERVED, depth);
         if (ret != 0) {
             return QUEUE_UNINITIALIZED;
         }
@@ -148,7 +151,8 @@ namespace Os {
         FW_ASSERT(this->m_handle != 0, this->m_handle);
 
         struct k_msgq *msgq = reinterpret_cast<struct k_msgq *>(this->m_handle);
-        return static_cast<U32>(msgq->msg_size);
+        FW_ASSERT(msgq->msg_size >= ZEPHYR_Q_RESERVED, msgq->msg_size);
+        return static_cast<U32>(msgq->msg_size - ZEPHYR_Q_RESERVED);
     }
 
 }
