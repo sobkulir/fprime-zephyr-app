@@ -31,6 +31,8 @@ module MyDeployment {
     instance rateGroup2
     instance rateGroupDriver
     instance staticMemory
+    instance fileUplink
+    instance fileUplinkBufferManager
     instance textLogger
     instance uplink
     instance helloWorld
@@ -86,6 +88,7 @@ module MyDeployment {
       # Rate group 2
       rateGroupDriver.CycleOut[Ports_RateGroups.rateGroup2] -> rateGroup2.CycleIn
       rateGroup2.RateGroupMemberOut[0] -> helloWorld.schedIn
+      rateGroup2.RateGroupMemberOut[1] -> fileUplinkBufferManager.schedIn
     }
 
     connections Uplink {
@@ -99,8 +102,10 @@ module MyDeployment {
       uplink.comOut -> cmdDisp.seqCmdBuff
       cmdDisp.seqCmdStatus -> uplink.cmdResponseIn
 
-      uplink.bufferAllocate -> staticMemory.bufferAllocate[Ports_StaticMemory.uplinkFrame]
-      uplink.bufferDeallocate -> staticMemory.bufferDeallocate[Ports_StaticMemory.uplinkFrame]
+      uplink.bufferAllocate -> fileUplinkBufferManager.bufferGetCallee
+      uplink.bufferOut -> fileUplink.bufferSendIn
+      uplink.bufferDeallocate -> fileUplinkBufferManager.bufferSendIn
+      fileUplink.bufferSendOut -> fileUplinkBufferManager.bufferSendIn
     }
 
     connections MyDeployment {

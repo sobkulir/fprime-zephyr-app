@@ -10,6 +10,7 @@ if (${CMAKE_SYSTEM_NAME} STREQUAL "Zephyr")
         "${CMAKE_CURRENT_LIST_DIR}/Queue.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/IntervalTimer.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Task.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/File.cpp"
     )
     register_fprime_module(fprime-zephyr_Os)
 endif()

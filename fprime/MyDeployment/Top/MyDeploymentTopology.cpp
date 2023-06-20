@@ -11,6 +11,7 @@
 #include <Fw/Types/MallocAllocator.hpp>
 #include <Os/Log.hpp>
 #include <Svc/FramingProtocol/FprimeProtocol.hpp>
+#include <Svc/BufferManager/BufferManager.hpp>
 
 #include <zephyr/kernel.h>
 #include <zephyr/device.h>
@@ -44,18 +45,18 @@ NATIVE_INT_TYPE rateGroup1Context[Svc::ActiveRateGroup::CONNECTION_COUNT_MAX] = 
 NATIVE_INT_TYPE rateGroup2Context[Svc::ActiveRateGroup::CONNECTION_COUNT_MAX] = {};
 
 // // A number of constants are needed for construction of the topology. These are specified here.
-// enum TopologyConstants {
-//     CMD_SEQ_BUFFER_SIZE = 5 * 1024,
-//     FILE_DOWNLINK_TIMEOUT = 1000,
-//     FILE_DOWNLINK_COOLDOWN = 1000,
-//     FILE_DOWNLINK_CYCLE_TIME = 1000,
-//     FILE_DOWNLINK_FILE_QUEUE_DEPTH = 10,
-//     HEALTH_WATCHDOG_CODE = 0x123,
-//     COMM_PRIORITY = 100,
-//     UPLINK_BUFFER_MANAGER_STORE_SIZE = 3000,
-//     UPLINK_BUFFER_MANAGER_QUEUE_SIZE = 30,
-//     UPLINK_BUFFER_MANAGER_ID = 200
-// };
+enum TopologyConstants {
+    // CMD_SEQ_BUFFER_SIZE = 5 * 1024,
+    // FILE_DOWNLINK_TIMEOUT = 1000,
+    // FILE_DOWNLINK_COOLDOWN = 1000,
+    // FILE_DOWNLINK_CYCLE_TIME = 1000,
+    // FILE_DOWNLINK_FILE_QUEUE_DEPTH = 10,
+    // HEALTH_WATCHDOG_CODE = 0x123,
+    // COMM_PRIORITY = 100,
+    UPLINK_BUFFER_MANAGER_STORE_SIZE = 1000,
+    UPLINK_BUFFER_MANAGER_QUEUE_SIZE = 5,
+    UPLINK_BUFFER_MANAGER_ID = 200
+};
 
 // // Ping entries are autocoded, however; this code is not properly exported. Thus, it is copied here.
 // Svc::Health::PingEntry pingEntries[] = {
@@ -94,6 +95,13 @@ void configureTopology() {
     // Framer and Deframer components need to be passed a protocol handler
     downlink.setup(framing);
     uplink.setup(deframing);
+
+    // Buffer managers need a configured set of buckets and an allocator used to allocate memory for those buckets.
+    Svc::BufferManager::BufferBins upBuffMgrBins;
+    memset(&upBuffMgrBins, 0, sizeof(upBuffMgrBins));
+    upBuffMgrBins.bins[0].bufferSize = UPLINK_BUFFER_MANAGER_STORE_SIZE;
+    upBuffMgrBins.bins[0].numBuffers = UPLINK_BUFFER_MANAGER_QUEUE_SIZE;
+    fileUplinkBufferManager.setup(UPLINK_BUFFER_MANAGER_ID, 0, mallocator, upBuffMgrBins);
 
     comm.setup(uart);
     // Note: Uncomment when using Svc:TlmPacketizer

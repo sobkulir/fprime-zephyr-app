@@ -5,12 +5,20 @@
     <packet name="CDH" id="1" level="1">
         <channel name="cmdDisp.CommandsDispatched"/>
         <channel name="rateGroup1.RgMaxTime"/>
+        <channel name="fileUplinkBufferManager.TotalBuffs"/>
+        <channel name="fileUplinkBufferManager.CurrBuffs"/>
+        <channel name="fileUplinkBufferManager.HiBuffs"/>
+        <channel name="fileUplink.FilesReceived"/>
+        <channel name="fileUplink.PacketsReceived"/>
         <channel name="rateGroup2.RgMaxTime"/>
     </packet>
 
     <packet name="CDHErrors" id="2" level="1">
         <channel name="rateGroup1.RgCycleSlips"/>
         <channel name="rateGroup2.RgCycleSlips"/>
+        <channel name="fileUplink.Warnings"/>
+        <channel name="fileUplinkBufferManager.NoBuffs"/>
+        <channel name="fileUplinkBufferManager.EmptyBuffs"/>
         <channel name="cmdDisp.CommandErrors"/>
     </packet>
 

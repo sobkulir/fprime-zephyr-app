@@ -133,6 +133,25 @@ module MyDeployment {
   """
 }
 
+    instance fileUplink: Svc.FileUplink base id 0x0900 \
+    queue size 10 \
+    stack size Default.STACK_SIZE \
+    priority 10 \
+{
+  phase Fpp.ToCpp.Phases.configObjects """
+  K_THREAD_STACK_DEFINE(stack, StackSizes::fileUplink);
+  """
+
+  phase Fpp.ToCpp.Phases.startTasks """
+  fileUplink.start(
+    static_cast<NATIVE_UINT_TYPE>(Priorities::fileUplink),
+    static_cast<NATIVE_UINT_TYPE>(K_THREAD_STACK_SIZEOF(ConfigObjects::fileUplink::stack)),
+    Os::Task::TASK_DEFAULT, // Default CPU
+    static_cast<NATIVE_UINT_TYPE>(TaskIds::fileUplink),
+    ConfigObjects::fileUplink::stack    
+  );
+  """
+}
 
   # ----------------------------------------------------------------------
   # Queued component instances
@@ -157,6 +176,8 @@ module MyDeployment {
   instance staticMemory: Svc.StaticMemory base id 0x4700
 
   instance textLogger: Svc.PassiveTextLogger base id 0x4800
+
+  instance fileUplinkBufferManager: Svc.BufferManager base id 0x4400
 
   instance uplink: Svc.Deframer base id 0x4900
 
