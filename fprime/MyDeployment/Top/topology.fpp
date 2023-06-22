@@ -24,6 +24,7 @@ module MyDeployment {
 
     instance tlmSend
     instance cmdDisp
+    instance cmdSeq
     instance comm
     instance downlink
     instance eventLogger
@@ -35,6 +36,7 @@ module MyDeployment {
     instance fileUplinkBufferManager
     instance textLogger
     instance uplink
+    instance zephyrTime
     instance helloWorld
     instance zephyrTimer
 
@@ -52,7 +54,7 @@ module MyDeployment {
 
     text event connections instance textLogger
 
-    # time connections instance linuxTime
+    time connections instance zephyrTime
 
     # health connections instance $health
 
@@ -84,11 +86,17 @@ module MyDeployment {
       rateGroupDriver.CycleOut[Ports_RateGroups.rateGroup1] -> rateGroup1.CycleIn
       rateGroup1.RateGroupMemberOut[0] -> tlmSend.Run
       rateGroup1.RateGroupMemberOut[1] -> uplink.schedIn
+      rateGroup1.RateGroupMemberOut[2] -> cmdSeq.schedIn
 
       # Rate group 2
       rateGroupDriver.CycleOut[Ports_RateGroups.rateGroup2] -> rateGroup2.CycleIn
       rateGroup2.RateGroupMemberOut[0] -> helloWorld.schedIn
       rateGroup2.RateGroupMemberOut[1] -> fileUplinkBufferManager.schedIn
+    }
+
+    connections Sequencer {
+      cmdSeq.comCmdOut -> cmdDisp.seqCmdBuff
+      cmdDisp.seqCmdStatus -> cmdSeq.cmdResponseIn
     }
 
     connections Uplink {

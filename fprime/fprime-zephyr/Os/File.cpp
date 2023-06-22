@@ -58,7 +58,6 @@ namespace Os {
             return NOT_OPENED;
         }
 
-        DEBUG_PRINT("Stunning open success\n");
         // Wild, wild west. Template this out later.
         this->m_fd = reinterpret_cast<NATIVE_INT_TYPE>(file);
         this->m_mode = mode;
@@ -81,7 +80,6 @@ namespace Os {
     }
 
     File::Status File::seek(NATIVE_INT_TYPE offset, bool absolute) {
-        DEBUG_PRINT("Seekin %d\n", offset);
 
         // make sure file has been opened
         if (this->m_mode == OPEN_NO_MODE) {
@@ -101,7 +99,7 @@ namespace Os {
     }
 
     File::Status File::write(const void * buffer, NATIVE_INT_TYPE &size, bool waitForDone) {
-        DEBUG_PRINT("Writtin %d\n", size);
+     
         // make sure file has been opened
         if (OPEN_NO_MODE == this->m_mode) {
             size = 0;
@@ -127,4 +125,58 @@ namespace Os {
 
         return OP_OK;
     }
+
+    File::Status File::read(void * buffer, NATIVE_INT_TYPE &size, bool waitForFull) {
+        
+        FW_ASSERT(buffer);
+        FW_ASSERT(size >= 0, size);
+        FW_ASSERT(this->m_fd != -1);
+
+        // make sure it has been opened
+        if (OPEN_NO_MODE == this->m_mode) {
+            size = 0;
+            return NOT_OPENED;
+        }
+
+        struct fs_file_t *file = reinterpret_cast<struct fs_file_t *>(this->m_fd);
+        NATIVE_INT_TYPE accSize = 0; // accumulated size
+        Status stat = OP_OK;
+        NATIVE_INT_TYPE maxIters = size*2; // loop limit; couldn't block more times than number of bytes
+
+        while (maxIters > 0) {
+
+            ssize_t rc = fs_read(file, buffer, size-accSize);
+
+            // could be an error
+            if (rc < 0) {
+                stat = OTHER_ERROR;
+                this->m_lastError = rc;
+                accSize = 0;
+                break; // break out of while loop
+            } else if (0 == rc || rc == size - accSize || not waitForFull) { // a good read
+                accSize += rc;
+                break;
+            } else { // good read and waitForFull
+                accSize += rc;
+                // move the buffer pointer
+                U8* charPtr = static_cast<U8*>(buffer);
+                charPtr = &charPtr[rc];
+                buffer = static_cast<void*>(charPtr);
+            }
+            
+            maxIters--; // decrement loop count
+        } // end read while loop
+
+        // make sure we didn't exceed loop count
+        FW_ASSERT(maxIters >= 0);
+
+        size = accSize;
+
+        return stat;
+    }
+    
+    NATIVE_INT_TYPE File::getLastError() {
+        return this->m_lastError;
+    }
+
 }

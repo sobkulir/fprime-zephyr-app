@@ -22,7 +22,7 @@
 			lookahead-size = <32>;
 			block-cycles = <512>;
 			partition = <&storage_partition>;
-			mount-point = "/lfs1";
+			mount-point = "/seq";
     };
 	};
 };

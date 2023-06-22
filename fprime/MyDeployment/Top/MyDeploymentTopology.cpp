@@ -46,7 +46,7 @@ NATIVE_INT_TYPE rateGroup2Context[Svc::ActiveRateGroup::CONNECTION_COUNT_MAX] = 
 
 // // A number of constants are needed for construction of the topology. These are specified here.
 enum TopologyConstants {
-    // CMD_SEQ_BUFFER_SIZE = 5 * 1024,
+    CMD_SEQ_BUFFER_SIZE = 3 * 1024,
     // FILE_DOWNLINK_TIMEOUT = 1000,
     // FILE_DOWNLINK_COOLDOWN = 1000,
     // FILE_DOWNLINK_CYCLE_TIME = 1000,
@@ -84,6 +84,7 @@ enum TopologyConstants {
 void configureTopology() {
     // Rate group driver needs a divisor list
     rateGroupDriver.configure(rateGroupDivisors, FW_NUM_ARRAY_ELEMENTS(rateGroupDivisors));
+    cmdSeq.allocateBuffer(0, mallocator, CMD_SEQ_BUFFER_SIZE);
 
     // Rate groups require context arrays.
     rateGroup1.configure(rateGroup1Context, FW_NUM_ARRAY_ELEMENTS(rateGroup1Context));

@@ -6,7 +6,7 @@ module MyDeployment {
 
   module Default {
     constant QUEUE_SIZE = 10
-    constant STACK_SIZE = 32 * 1024
+    constant STACK_SIZE = 22 * 1024
   }
 
   # ----------------------------------------------------------------------
@@ -49,6 +49,25 @@ module MyDeployment {
     Os::Task::TASK_DEFAULT, // Default CPU
     static_cast<NATIVE_UINT_TYPE>(TaskIds::rateGroup2),
     ConfigObjects::rateGroup2::stack    
+  );
+  """
+}
+instance cmdSeq: Svc.CmdSequencer base id 0x0600 \
+  queue size Default.QUEUE_SIZE \
+  stack size Default.STACK_SIZE \
+  priority 10 \
+{
+  phase Fpp.ToCpp.Phases.configObjects """
+  K_THREAD_STACK_DEFINE(stack, StackSizes::cmdSeq);
+  """
+
+  phase Fpp.ToCpp.Phases.startTasks """
+  cmdSeq.start(
+    static_cast<NATIVE_UINT_TYPE>(Priorities::cmdSeq),
+    static_cast<NATIVE_UINT_TYPE>(K_THREAD_STACK_SIZEOF(ConfigObjects::cmdSeq::stack)),
+    Os::Task::TASK_DEFAULT, // Default CPU
+    static_cast<NATIVE_UINT_TYPE>(TaskIds::cmdSeq),
+    ConfigObjects::cmdSeq::stack    
   );
   """
 }
@@ -182,6 +201,8 @@ module MyDeployment {
   instance uplink: Svc.Deframer base id 0x4900
 
   instance helloWorld: Components.HelloWorld base id 0x0F00
+
+  instance zephyrTime: Components.ZephyrTime base id 0x4500
 
   instance zephyrTimer: Components.ZephyrTimer base id 0x1000
   

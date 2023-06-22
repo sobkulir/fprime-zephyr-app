@@ -4,9 +4,9 @@
 #include <zephyr/kernel.h>
 #include <cstring>
 
-#define ZEPHYR_Q_MAX_MSG_SIZE 256
+#define ZEPHYR_Q_MAX_MSG_SIZE 300
 // U8 is reserved for the message size
-#define ZEPHYR_Q_RESERVED (sizeof(U8))
+#define ZEPHYR_Q_RESERVED (sizeof(U16))
 #define ZEPHYR_Q_MAX_USER_MSG_SIZE (ZEPHYR_Q_MAX_MSG_SIZE - ZEPHYR_Q_RESERVED)
 
 // Warnings: 1) Priorities are ignored
@@ -67,8 +67,8 @@ namespace Os {
         struct k_msgq *msgq = reinterpret_cast<struct k_msgq *>(this->m_handle);
 
         U8 tmp_buf[ZEPHYR_Q_MAX_MSG_SIZE];
-        tmp_buf[0] = size;
-        memcpy(&tmp_buf[1], buffer, size);
+        *reinterpret_cast<U16 *>(tmp_buf) = static_cast<U16>(size);
+        memcpy(&tmp_buf[ZEPHYR_Q_RESERVED], buffer, size);
         NATIVE_INT_TYPE ret = k_msgq_put(msgq, tmp_buf, (block == QUEUE_BLOCKING) ? K_FOREVER : K_NO_WAIT);
 
         if (ret != 0) {
@@ -122,8 +122,8 @@ namespace Os {
             }
         }
 
-        actualSize = tmp_buf[0];
-        memcpy(buffer, &tmp_buf[1], actualSize);
+        actualSize = *reinterpret_cast<U16 *>(tmp_buf);
+        memcpy(buffer, &tmp_buf[ZEPHYR_Q_RESERVED], actualSize);
         return QUEUE_OK;
     }
 

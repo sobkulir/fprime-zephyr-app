@@ -81,11 +81,10 @@ int main()
 		return 1;
 	}
 
-
     MyDeployment::TopologyState inputs;
     printk("Setting up topology\n");
     MyDeployment::setupTopology(inputs);
     printk("Topology running, entering simulatedCycle.\n");
-    startSimulatedCycle(200);
+    startSimulatedCycle(100);
     return 0;
 }
