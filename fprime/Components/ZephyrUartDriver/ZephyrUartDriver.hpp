@@ -6,9 +6,9 @@
 
 #include <zephyr/kernel.h>
 #include <zephyr/device.h>
+#include <zephyr/sys/ring_buffer.h>
 
-#define Q_MSG_SIZE 4
-#define Q_MAX_MSGS 400
+#define RING_BUF_SIZE 1024
 
 namespace Components {
 
@@ -17,12 +17,6 @@ class ZephyrUartDriver : public Drv::ByteStreamDriverModelComponentBase {
     enum SetupStatus {
         SETUP_OK, //!<  Setup was successful
         SETUP_DEVICE_NOT_READY, //!<  Device is not ready
-    };
-    
-    struct IrqData {
-      char rx_buf[Q_MSG_SIZE];
-      int rx_buf_pos;
-      struct k_msgq *msgq;
     };
 
     // ----------------------------------------------------------------------
@@ -72,10 +66,8 @@ class ZephyrUartDriver : public Drv::ByteStreamDriverModelComponentBase {
     Drv::PollStatus poll_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer);
 
     const struct device *m_dev;
-    alignas(4) char msgq_buffer[Q_MAX_MSGS * Q_MSG_SIZE];
-    struct k_msgq msgq;
-    IrqData irq_data;
-
+    uint8_t ring_buf_data[RING_BUF_SIZE];
+    struct ring_buf ring_buf;
 };
 
 }  // end namespace Drv
