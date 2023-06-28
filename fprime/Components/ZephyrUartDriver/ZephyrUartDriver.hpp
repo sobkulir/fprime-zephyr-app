@@ -36,7 +36,7 @@ class ZephyrUartDriver : public Drv::ByteStreamDriverModelComponentBase {
      */
     void init(const NATIVE_INT_TYPE instance = 0);
 
-    SetupStatus setup(const struct device *uart);
+    SetupStatus setup(const struct device *uart, const NATIVE_INT_TYPE readTaskPriority, const NATIVE_INT_TYPE readTaskStackSize, void *readTaskStack);
 
     /**
      * \brief Destroy the component
@@ -44,6 +44,19 @@ class ZephyrUartDriver : public Drv::ByteStreamDriverModelComponentBase {
     ~ZephyrUartDriver();
 
   PRIVATE:
+
+    /**
+     * @brief Starts the task that reads from the ring buffer and dispatches it to the deframer.
+     * 
+     * Must be called from `setup()`, after the ring buffer has been initialized and ideally before
+     * the UART starts sending data to the ring_buffer.
+     * 
+     * @param name 
+     * @param priority 
+     * @param stackSize 
+     * @param stack 
+     */
+    void startReadTask(const NATIVE_INT_TYPE priority, const NATIVE_INT_TYPE stackSize, void *stack);
 
     // ----------------------------------------------------------------------
     // Handler implementations for user-defined typed input ports
@@ -65,9 +78,12 @@ class ZephyrUartDriver : public Drv::ByteStreamDriverModelComponentBase {
      */
     Drv::PollStatus poll_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer);
 
+    static void readTask(void *ptr);
+
+    Os::Task m_read_task;  // Task for reading ring_buf and dispatching it to deframer.
     const struct device *m_dev;
-    uint8_t ring_buf_data[RING_BUF_SIZE];
-    struct ring_buf ring_buf;
+    uint8_t m_ring_buf_data[RING_BUF_SIZE];
+    struct ring_buf m_ring_buf;
 };
 
 }  // end namespace Drv

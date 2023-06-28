@@ -38,13 +38,18 @@ namespace Os {
         if (Task::s_taskRegistry) {
             Task::s_taskRegistry->addTask(this);
         }
-
+        
         struct k_thread *thread = reinterpret_cast<struct k_thread *>(k_malloc(sizeof(struct k_thread)));
         if (thread == nullptr) {
             return TASK_ERROR_RESOURCES;
         }
 
-        k_tid_t tid = k_thread_create(thread, reinterpret_cast<k_thread_stack_t *>(stack), stackSize, zephyrEntryWrapper, &this->m_routineWrapper, nullptr, nullptr, priority, K_FP_REGS, K_NO_WAIT);
+
+        k_tid_t tid = k_thread_create(thread, reinterpret_cast<k_thread_stack_t *>(stack), stackSize, zephyrEntryWrapper, &this->m_routineWrapper, nullptr, nullptr, priority, 0, K_NO_WAIT);
+#ifdef CONFIG_THREAD_NAME
+        int ret = k_thread_name_set(thread, this->m_name.toChar());
+        FW_ASSERT(ret == 0, ret);
+#endif
         this->m_handle = reinterpret_cast<POINTER_CAST>(tid);
 
         // Uncomment to allow threads allocating memory from kernel heap.

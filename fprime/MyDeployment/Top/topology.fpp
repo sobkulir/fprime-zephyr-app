@@ -85,8 +85,7 @@ module MyDeployment {
       # Rate group 1
       rateGroupDriver.CycleOut[Ports_RateGroups.rateGroup1] -> rateGroup1.CycleIn
       rateGroup1.RateGroupMemberOut[0] -> tlmSend.Run
-      rateGroup1.RateGroupMemberOut[1] -> uplink.schedIn
-      rateGroup1.RateGroupMemberOut[2] -> cmdSeq.schedIn
+      rateGroup1.RateGroupMemberOut[1] -> cmdSeq.schedIn
 
       # Rate group 2
       rateGroupDriver.CycleOut[Ports_RateGroups.rateGroup2] -> rateGroup2.CycleIn
@@ -105,7 +104,6 @@ module MyDeployment {
       comm.$recv -> uplink.framedIn
 
       uplink.framedDeallocate -> staticMemory.bufferDeallocate[Ports_StaticMemory.uplink]
-      uplink.framedPoll -> comm.poll
 
       uplink.comOut -> cmdDisp.seqCmdBuff
       cmdDisp.seqCmdStatus -> uplink.cmdResponseIn

@@ -62,3 +62,9 @@ Deleting Autocoder generated files
 ```
 ls -d fprime/Autocoders/Python/src/fprime_ac/generators/templates/**/**.py | sed '/.*__init__.py/d' | xargs -I{} rm -r "{}"
 ```
+
+Build fs shell
+
+```
+west build -b nucleo_h723zg samples/subsys/shell/fs/ -- -DDTC_OVERLAY_FILE=/zephyr-workspace/fprime-zephyr-app/fprime/MyDeployment/boards/nucleo_h723zg.overlay
+```

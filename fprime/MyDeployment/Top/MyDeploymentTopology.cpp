@@ -24,6 +24,8 @@ const struct device *const uart = DEVICE_DT_GET(UART_DEVICE_NODE);
 // Allows easy reference to objects in FPP/autocoder required namespaces
 using namespace MyDeployment;
 
+K_THREAD_STACK_DEFINE(uartDriverReadTaskStack, 20000);
+
 // Instantiate a system logger that will handle Fw::Logger::logMsg calls
 Os::Log logger;
 
@@ -104,7 +106,11 @@ void configureTopology() {
     upBuffMgrBins.bins[0].numBuffers = UPLINK_BUFFER_MANAGER_QUEUE_SIZE;
     fileUplinkBufferManager.setup(UPLINK_BUFFER_MANAGER_ID, 0, mallocator, upBuffMgrBins);
 
-    comm.setup(uart);
+    comm.setup(
+        uart,
+        /*readTaskPriority=*/40,
+        static_cast<NATIVE_UINT_TYPE>(K_THREAD_STACK_SIZEOF(uartDriverReadTaskStack)),
+        uartDriverReadTaskStack);
     // Note: Uncomment when using Svc:TlmPacketizer
     // tlmSend.setPacketList(MyDeploymentPacketsPkts, MyDeploymentPacketsIgnore, 1);
 }
