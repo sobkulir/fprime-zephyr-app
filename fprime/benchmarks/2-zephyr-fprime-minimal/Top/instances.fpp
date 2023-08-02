@@ -186,7 +186,7 @@ instance cmdSeq: Svc.CmdSequencer base id 0x0600 \
   @ Communications driver.
   instance comm: Drv.ByteStreamDriverModel base id 0x4000 \
     type "Components::ZephyrUartDriver" \ # type specified to select implementor of ByteStreamDriverModel
-    at "../../Components/ZephyrUartDriver/ZephyrUartDriver.hpp" # location of above implementor must also be specified
+    at "../../../Components/ZephyrUartDriver/ZephyrUartDriver.hpp" # location of above implementor must also be specified
 
   instance downlink: Svc.Framer base id 0x4100
 

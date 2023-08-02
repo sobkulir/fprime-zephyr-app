@@ -1,7 +1,7 @@
 import os
 import argparse
 
-ALL_BENCHMARKS = ['1-zephyr', '1.1-zephyr-fpu', '1.2-zephyr-drivers']
+ALL_BENCHMARKS = ['1-zephyr', '1.1-zephyr-fpu', '1.2-zephyr-drivers', '1.3-zephyr-cpp', '2-zephyr-fprime-minimal']
 SCRIPT_PATH = os.path.dirname(os.path.realpath(__file__))
 
 def parse_args():

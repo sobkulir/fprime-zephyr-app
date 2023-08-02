@@ -4,7 +4,7 @@
 //
 // ======================================================================
 // Used to access topology functions
-#include <MyDeployment/Top/MyDeploymentTopology.hpp>
+#include <benchmarks/2-zephyr-fprime-minimal/Top/MyDeploymentTopology.hpp>
 #include <zephyr/kernel.h>
 
 #include <zephyr/device.h>

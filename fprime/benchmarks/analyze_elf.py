@@ -15,8 +15,8 @@ def parse_args():
     '''Parse command line arguments'''
     parser = argparse.ArgumentParser(
         description='Analyze ELF files for Flash and RAM usage')
-    parser.add_argument('elf_file_new', type=str, help='Path to the first ELF file')
-    parser.add_argument("elf_file_old", type=str, nargs='?', default=None, help="Path to the second ELF file (optional)")
+    parser.add_argument('elf_file_old', type=str, help='Path to the first ELF file')
+    parser.add_argument("elf_file_new", type=str, nargs='?', default=None, help="Path to the second ELF file (optional)")
 
     return parser.parse_args()
 
@@ -293,8 +293,8 @@ def diff_elf_analysis_symbols(elf_file_new, elf_file_old):
 
 if __name__ == '__main__':
     args = parse_args()
-    if args.elf_file_old is None:
-        single_elf_analysis(args.elf_file_new)
+    if args.elf_file_new is None:
+        single_elf_analysis(args.elf_file_old)
     else:
         diff_elf_analysis_sections(args.elf_file_new, args.elf_file_old)
         diff_elf_analysis_symbols(args.elf_file_new, args.elf_file_old)

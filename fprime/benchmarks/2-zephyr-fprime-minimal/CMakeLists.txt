@@ -18,7 +18,7 @@ cmake_policy(SET CMP0048 NEW)
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 # Needed for loading the zephyr.cmake platform file from F Prime.
 set(CMAKE_SYSTEM_NAME "Zephyr")
-project(MyDeployment VERSION 1.0.0 LANGUAGES C CXX)
+project(Hovnooo VERSION 1.0.0 LANGUAGES C CXX)
 
 # zephyr_compile_options(-fcallgraph-info=su,da)
 
@@ -32,8 +32,8 @@ set(FPRIME_SKIP_TOOLS_VERSION_CHECK ON)
 # Space saving testing.
 # set(FPRIME_ENABLE_TEXT_LOGGERS OFF)
 
-set(FPRIME_FRAMEWORK_PATH "${CMAKE_CURRENT_LIST_DIR}/../fprime" CACHE PATH "Location of F prime framework" FORCE)
-set(FPRIME_PROJECT_ROOT "${CMAKE_CURRENT_LIST_DIR}/.." CACHE PATH "Root path of F prime project" FORCE)
+set(FPRIME_FRAMEWORK_PATH "${CMAKE_CURRENT_LIST_DIR}/../../fprime" CACHE PATH "Location of F prime framework" FORCE)
+set(FPRIME_PROJECT_ROOT "${CMAKE_CURRENT_LIST_DIR}/../.." CACHE PATH "Root path of F prime project" FORCE)
 include("${FPRIME_FRAMEWORK_PATH}/cmake/FPrime.cmake")
 # NOTE: register custom targets between these two lines
 include("${FPRIME_FRAMEWORK_PATH}/cmake/FPrime-Code.cmake")
@@ -42,11 +42,17 @@ include("${FPRIME_FRAMEWORK_PATH}/cmake/FPrime-Code.cmake")
 ###
 # Components and Topology
 ###
-include("${FPRIME_PROJECT_ROOT}/project.cmake")
+add_fprime_subdirectory("${FPRIME_PROJECT_ROOT}/fprime-zephyr")
+add_fprime_subdirectory("${FPRIME_PROJECT_ROOT}/Components/HelloWorld/")
+add_fprime_subdirectory("${FPRIME_PROJECT_ROOT}/Components/ZephyrTimer/")
+add_fprime_subdirectory("${FPRIME_PROJECT_ROOT}/Components/ZephyrUartDriver/")
+add_fprime_subdirectory("${FPRIME_PROJECT_ROOT}/Components/ZephyrTime/")
+
+# include("${FPRIME_PROJECT_ROOT}/project.cmake")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Top/")
 
 ###
 # Final binary
 ###
 target_sources(app PRIVATE Main.cpp)
-target_link_libraries(app PRIVATE MyDeployment_Top)
+target_link_libraries(app PRIVATE benchmarks_2-zephyr-fprime-minimal_Top)

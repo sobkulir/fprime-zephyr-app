@@ -8,7 +8,7 @@
 
 // #include "Drv/BlockDriver/BlockDriver.hpp"
 // #include "Fw/Types/MallocAllocator.hpp"
-#include "MyDeployment/Top/FppConstantsAc.hpp"
+#include <benchmarks/2-zephyr-fprime-minimal/Top/FppConstantsAc.hpp>
 // #include "Svc/FramingProtocol/FprimeProtocol.hpp"
 // #include "Svc/Health/Health.hpp"
 
