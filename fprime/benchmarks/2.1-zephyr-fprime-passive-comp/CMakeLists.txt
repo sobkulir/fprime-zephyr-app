@@ -18,7 +18,7 @@ cmake_policy(SET CMP0048 NEW)
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 # Needed for loading the zephyr.cmake platform file from F Prime.
 set(CMAKE_SYSTEM_NAME "Zephyr")
-project(Zephyr_fprime_minimal VERSION 1.0.0 LANGUAGES C CXX)
+project(Zephyr_fprime_passive_comp VERSION 1.0.0 LANGUAGES C CXX)
 
 # zephyr_compile_options(-fcallgraph-info=su,da)
 
@@ -56,4 +56,4 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Top/")
 # Final binary
 ###
 target_sources(app PRIVATE Main.cpp)
-target_link_libraries(app PRIVATE benchmarks_2-zephyr-fprime-minimal_Top)
+target_link_libraries(app PRIVATE benchmarks_2.1-zephyr-fprime-passive-comp_Top)

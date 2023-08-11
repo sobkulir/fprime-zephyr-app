@@ -4,8 +4,8 @@
 //
 // ======================================================================
 // Provides access to autocoded functions
-#include <benchmarks/2-zephyr-fprime-minimal/Top/MyDeploymentTopologyAc.hpp>
-#include <benchmarks/2-zephyr-fprime-minimal/Top/MyDeploymentPacketsAc.hpp>
+#include <benchmarks/2.1-zephyr-fprime-passive-comp/Top/MyDeploymentTopologyAc.hpp>
+#include <benchmarks/2.1-zephyr-fprime-passive-comp/Top/MyDeploymentPacketsAc.hpp>
 
 // Necessary project-specified types
 #include <Fw/Types/MallocAllocator.hpp>

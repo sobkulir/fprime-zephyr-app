@@ -7,7 +7,7 @@
 #define MYDEPLOYMENT_MYDEPLOYMENTTOPOLOGY_HPP
 // Included for access to MyDeployment::TopologyState and MyDeployment::ConfigObjects::pingEntries. These definitions are required by the
 // autocoder, but are also used in this hand-coded topology.
-#include <benchmarks/2-zephyr-fprime-minimal/Top/MyDeploymentTopologyDefs.hpp>
+#include <benchmarks/2.1-zephyr-fprime-passive-comp/Top/MyDeploymentTopologyDefs.hpp>
 
 // Remove unnecessary MyDeployment:: qualifications
 using namespace MyDeployment;

@@ -245,7 +245,7 @@ def diff_elf_analysis_sections(elf_file_new, elf_file_old):
         if sec_new.name not in sections_old.getNameIndex():
             added.append(sec_new)
 
-    removed_added_sec_mapping = lambda x, prefix: {"Name": f'{prefix}{x.name}', "Type": x.type, "Addr": x.addr, "Size": x.size}
+    removed_added_sec_mapping = lambda x, prefix: {"Name": f'{prefix}{x.name}', "Type": x.type, "Addr": hex(x.addr), "Size": x.size}
     removed_map = map(lambda x: removed_added_sec_mapping(x, '(-) '), removed)
     added_map = map(lambda x: removed_added_sec_mapping(x, '(+) '), added)
 
