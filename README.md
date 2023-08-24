@@ -1,8 +1,5 @@
 # Port of F' onto Zephyr
 
-_Currently doesn't compile yet, stay tuned_
-
-
 This is a minimal application running F' (v3.2.0) on Zephyr (v3.3.0). The example deployment is under `fprime/MyDeployment`.
 This port is untested and unfinished, no OSAL features have been implemented and only Baremetal F' scheduler is used.
 
