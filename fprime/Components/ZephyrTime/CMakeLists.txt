@@ -19,3 +19,7 @@ set(SOURCE_FILES
 # )
 
 register_fprime_module()
+
+# Because the component depends on compile-time generated zephyr header:
+# `syscall_list.h`, solution taken from here: https://github.com/zephyrproject-rtos/zephyr/issues/32537#issuecomment-784042873
+target_link_libraries(Components_ZephyrTime PUBLIC zephyr_interface)
