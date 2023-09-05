@@ -1,3 +1,6 @@
+# A separate folder is used because the image doesn't use any of the source so I found it cleaner
+# than adding another .dockerignore file in top-level to ignore everything.
+
 # ubuntu:22.04
 FROM ubuntu@sha256:67211c14fa74f070d27cc59d69a7fa9aeff8e28ea118ef3babc295a0428a6d21 AS base
 
@@ -56,8 +59,9 @@ ENV LC_ALL=en_US.UTF-8
 RUN python3 -m pip install -U pip && \
     pip3 install -U wheel setuptools && \
     pip3 install \
+        -r https://raw.githubusercontent.com/nasa/fprime/v3.3.2/requirements.txt && \
+    pip3 install \
         -r https://raw.githubusercontent.com/zephyrproject-rtos/zephyr/zephyr-v3.3.0/scripts/requirements.txt \
-        -r https://raw.githubusercontent.com/nasa/fprime/devel/requirements.txt \
         west && \
     pip3 check
 
@@ -109,6 +113,9 @@ RUN sudo -E -- bash -c ' \
     /opt/toolchains/zephyr-sdk-${ZSDK_VERSION}/setup.sh -c && \
     chown -R user:user /home/user/.cmake \
     '
+
+# Activate Zephyr environment (needed for CMake to find the Zephyr)
+RUN echo '[ -f /zephyr-workspace/zephyr/zephyr-env.sh ] && . /zephyr-workspace/zephyr/zephyr-env.sh' >> /home/user/.bashrc
 
 WORKDIR /zephyr-workspace/fprime-zephyr-app
 ENTRYPOINT ["/bin/bash"]

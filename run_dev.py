@@ -4,7 +4,7 @@ import argparse
 import subprocess
 from pathlib import Path
 
-DEFAULT_IMAGE = 'rsobkuliak/fprime-zephyr:0.0.3'
+DEFAULT_IMAGE = 'rsobkuliak/fprime-zephyr:0.0.4'
 
 # Parent directory of current working directory
 DEFAULT_PROJECT_DIR = '../'
