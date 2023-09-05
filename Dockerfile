@@ -81,24 +81,24 @@ RUN mkdir -p /opt/toolchains && \
     rm zephyr-sdk-${ZSDK_VERSION}_linux-x86_64.tar.xz
 
 # Install fprime-community/fpp dependencies.
-RUN apt-get install --no-install-recommends -y curl && \
-    cd /home/user && \
-    curl -L "https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-22.3.0/graalvm-ce-java11-linux-amd64-22.3.0.tar.gz" | tar -xz && \
-    ./graalvm-ce-java11-22.3.0/bin/gu install native-image
+# RUN apt-get install --no-install-recommends -y curl && \
+#     cd /home/user && \
+#     curl -L "https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-22.3.0/graalvm-ce-java11-linux-amd64-22.3.0.tar.gz" | tar -xz && \
+#     ./graalvm-ce-java11-22.3.0/bin/gu install native-image
 
-ENV GRAALVM_JAVA_HOME=/home/user/graalvm-ce-java11-22.3.0
-ENV PATH="${PATH}:/home/user/graalvm-ce-java11-22.3.0/bin"
+# ENV GRAALVM_JAVA_HOME=/home/user/graalvm-ce-java11-22.3.0
+# ENV PATH="${PATH}:/home/user/graalvm-ce-java11-22.3.0/bin"
 
-RUN apt-get install --no-install-recommends -y apt-transport-https gnupg -yqq && \
-    echo "deb https://repo.scala-sbt.org/scalasbt/debian all main" | tee /etc/apt/sources.list.d/sbt.list && \
-    echo "deb https://repo.scala-sbt.org/scalasbt/debian /" | tee /etc/apt/sources.list.d/sbt_old.list && \
-    curl -sL "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x2EE0EA64E40A89B84B2DF73499E82A75642AC823" | gpg --no-default-keyring --keyring gnupg-ring:/etc/apt/trusted.gpg.d/scalasbt-release.gpg --import && \
-    chmod 644 /etc/apt/trusted.gpg.d/scalasbt-release.gpg && \
-    apt-get update && \
-    apt-get install sbt
+# RUN apt-get install --no-install-recommends -y apt-transport-https gnupg -yqq && \
+#     echo "deb https://repo.scala-sbt.org/scalasbt/debian all main" | tee /etc/apt/sources.list.d/sbt.list && \
+#     echo "deb https://repo.scala-sbt.org/scalasbt/debian /" | tee /etc/apt/sources.list.d/sbt_old.list && \
+#     curl -sL "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x2EE0EA64E40A89B84B2DF73499E82A75642AC823" | gpg --no-default-keyring --keyring gnupg-ring:/etc/apt/trusted.gpg.d/scalasbt-release.gpg --import && \
+#     chmod 644 /etc/apt/trusted.gpg.d/scalasbt-release.gpg && \
+#     apt-get update && \
+#     apt-get install sbt
 
 # Prepend the user's bin to override global fpp-* binaries.
-ENV PATH="/home/user/bin:${PATH}"
+# ENV PATH="/home/user/bin:${PATH}"
 
 # Run the Zephyr SDK setup script as 'user' in order to ensure that the
 # `Zephyr-sdk` CMake package is located in the package registry under the

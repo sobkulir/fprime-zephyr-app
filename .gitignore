@@ -66,5 +66,5 @@ zephyr/manifest-tmp/
 
 # Debug Folders
 cmake-build-debug/
-/build*
+build*
 logs/
