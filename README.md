@@ -32,6 +32,7 @@ $ west update
 ```
 
 ## Building and running
+TODO: This section needs to be reworked.
 
 If you don't have a board, build and run for qemu:
 ```shell
@@ -45,19 +46,32 @@ $ rm -rf build && west build -b nucleo_h723zg fprime/MyDeployment/
 $ sudo west flash
 ```
 
-Running `fprime-gds` over UART:
+Building the F' way:
+```shell
+$ cd LedBlinker && fprime-util generate -DBOARD=nucleo_h723zg -DCMAKE_GENERATOR=Ninja
+$ fprime-util build -j16
 ```
-sudo fprime-gds --uart-device /dev/ttyUSB0 --uart-baud 115200 --dictionary build/MyDeployment/Top/MyDeploymentTopologyAppDictionary.xml -n --comm-adapter uart
+
+### Ground Station
+Running `fprime-gds` over UART:
+```shell
+$ sudo fprime-gds --uart-device /dev/ttyUSB0 --uart-baud 115200 --dictionary build/MyDeployment/Top/MyDeploymentTopologyAppDictionary.xml -n --comm-adapter uart
 
 ```
+
 
 ## Maintanence
 
 ### Bumping F' version
-To bump F' version, checkout the new version and cherry-pick the commit that adds static stack support:
+To bump F' version, it requires some GIT magic and you'll likely run into some issues :)) You need your fork of fprime (here named `origin`) and another remote which is the original fprime repository (here `base`).
+
+Checkout the new version, branch, and cherry-pick the commit that adds the static stack support:
 ```shell
-$ cd fprime && git checkout <tag>
-$ git cherry-pick dbfb5782
+# (one time setup) Add nasa/fprime repo to fetch from
+$ cd fprime && git remote add base git@github.com:nasa/fprime.git
+# Fetch and cherry pick (in fprime/)
+$ git fetch base && git checkout <tag> && git checkout -b zephyr_port_<tag>
+$ git cherry-pick dbfb5782 && git push
 ```
 
 Afterwards, update the Dockerfile to have the corect version of the tools and follow next section to rebuild it:
