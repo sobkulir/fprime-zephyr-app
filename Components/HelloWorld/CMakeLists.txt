@@ -19,3 +19,8 @@ set(SOURCE_FILES
 # )
 
 register_fprime_module()
+
+set(UT_SOURCE_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/HelloWorld.fpp"
+)
+register_fprime_ut()
