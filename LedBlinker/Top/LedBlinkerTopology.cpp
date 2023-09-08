@@ -17,7 +17,6 @@
 #include <zephyr/kernel.h>
 #include <zephyr/device.h>
 #include <zephyr/devicetree.h>
-#include <zephyr/sys_clock.h>
 
 #define UART_DEVICE_NODE DT_NODELABEL(usart2)
 
@@ -25,8 +24,6 @@ const struct device *const uart = DEVICE_DT_GET(UART_DEVICE_NODE);
 
 // Allows easy reference to objects in FPP/autocoder required namespaces
 using namespace LedBlinker;
-
-K_THREAD_STACK_DEFINE(uartDriverReadTaskStack, 20000);
 
 // Instantiate a system logger that will handle Fw::Logger::logMsg calls
 Os::Log logger;
@@ -131,7 +128,8 @@ void setupTopology(const TopologyState& state) {
     printk("sizeof('Svc::CmdSequencerComponentBase'): %d\n", sizeof(Svc::CmdSequencerComponentBase));
     printk("sizeof('Fw::ActiveComponentBase'): %d\n", sizeof(Fw::ActiveComponentBase));
     printk("sizeof('Os::Task'): %d\n", sizeof(Os::Task));
-    
+
+
     // Autocoded initialization. Function provided by autocoder.
     initComponents(state);
     // Autocoded id setup. Function provided by autocoder.
@@ -147,7 +145,6 @@ void setupTopology(const TopologyState& state) {
     // Autocoded task kick-off (active components). Function provided by autocoder.
     startTasks(state);
 
-    zephyrRateDriver.configure(/*intervalUs=*/1 * USEC_PER_MSEC);
     commUartDriver.configure(uart, 115200);
 }
 

@@ -9,10 +9,10 @@
 #include <Fw/Logger/Logger.hpp>
 #include <Fw/Types/Assert.hpp>
 
+#include <zephyr/kernel.h>
+
 namespace Zephyr
 {
-
-    ZephyrRateDriver *ZephyrRateDriver::s_driver = NULL;
 
     // ----------------------------------------------------------------------
     // Construction, initialization, and destruction
@@ -22,7 +22,6 @@ namespace Zephyr
         ZephyrRateDriver(
             const char *const compName) : ZephyrRateDriverComponentBase(compName)
     {
-        s_driver = this;
     }
 
     ZephyrRateDriver ::
@@ -30,22 +29,17 @@ namespace Zephyr
     {
     }
 
-    void ZephyrRateDriver::configure(U32 intervalUs)
-    {
-        this->m_intervalUs = intervalUs;
-    }
-
-    void ZephyrRateDriver::cycle()
+    void ZephyrRateDriver::cycle(const U32 intervalUs)
     {
         // Consider implementing this using k_timer APIs instead for higher precision,
         // depending on your MCU.
 
-        Fw::Logger::logMsg("Starting base rate group clock with period of %" PRIu32 " microseconds\n", this->m_intervalUs);
+        Fw::Logger::logMsg("Starting base rate group clock with period of %" PRIu32 " microseconds\n", intervalUs);
 
         // Ideally, we would use HW cycles, but our platform (STM32H723), doesn't support
         // 64-bit cycle counter. Kernel tick-rate is configurable via
         // CONFIG_SYS_CLOCK_TICKS_PER_SEC (default 10KHz).
-        I64 intervalTicks = k_us_to_ticks_floor64(this->m_intervalUs);
+        I64 intervalTicks = k_us_to_ticks_floor64(intervalUs);
         I64 epochStartTicks = k_uptime_ticks();
         FW_ASSERT(epochStartTicks >= 0, epochStartTicks);
 

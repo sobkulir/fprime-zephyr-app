@@ -14,6 +14,8 @@
 #include <zephyr/logging/log.h>
 #include <zephyr/storage/flash_map.h>
 
+#include <zephyr/sys_clock.h>
+
 LOG_MODULE_REGISTER(main);
 
 static int littlefs_flash_erase(unsigned int id)
@@ -86,7 +88,7 @@ int main()
     printk("Setting up topology\n");
     LedBlinker::setupTopology(inputs);
     printk("Topology running, entering simulatedCycle.\n");
-	zephyrRateDriver.cycle();
+	zephyrRateDriver.cycle(/*intervalUs=*/1 * USEC_PER_MSEC);
     
 	return 0;
 }

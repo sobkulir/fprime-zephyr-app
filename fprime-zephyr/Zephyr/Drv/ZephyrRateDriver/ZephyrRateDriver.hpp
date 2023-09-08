@@ -8,8 +8,6 @@
 #define ZephyrRateDriver_HPP
 
 #include "Zephyr/Drv/ZephyrRateDriver/ZephyrRateDriverComponentAc.hpp"
-#include <Svc/Cycle/TimerVal.hpp>
-#include <zephyr/kernel.h>
 
 namespace Zephyr {
 
@@ -34,26 +32,11 @@ namespace Zephyr {
         ~ZephyrRateDriver();
 
         /**
-         * Configure this component with the interval time in microseconds.
+         * Starts the endless internal cycle of the driver.
+         * 
          * \param U32 intervalUs: interval to ping in microseconds
          */
-        void configure(U32 intervalUs);
-
-        /**
-         * Starts the endless internal cycle of the driver.
-         */
-        void cycle();
-
-
-        //!< Interval of the driver
-        U32 m_intervalUs;
-
-    PRIVATE:
-
-        //!< Last time of run
-        Svc::TimerVal m_last;
-        static ZephyrRateDriver* s_driver;
-        struct k_timer s_itimer;
+        void cycle(const U32 intervalUs);
 
     };
 
