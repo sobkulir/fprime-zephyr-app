@@ -37,6 +37,9 @@ namespace Zephyr
 
     void ZephyrRateDriver::cycle()
     {
+        // Consider implementing this using k_timer APIs instead for higher precision,
+        // depending on your MCU.
+
         Fw::Logger::logMsg("Starting base rate group clock with period of %" PRIu32 " microseconds\n", this->m_intervalUs);
 
         // Ideally, we would use HW cycles, but our platform (STM32H723), doesn't support
@@ -62,12 +65,12 @@ namespace Zephyr
 
             I64 curCycle = (nowTicks - epochStartTicks) / intervalTicks;
             
-            // Asserts on a cycle slip. Note: Depending on the app, it might be a better idea to
-            // log it instead.
+            // Asserts on a cycle slip.
+            // Note: Depending on the app, it might be a better idea to send log it as tellemetry instead.
             FW_ASSERT(totalCycles == curCycle, curCycle - totalCycles);
             totalCycles = curCycle + 1;
 
-            uint64_t waitTicks = epochStartTicks + (curCycle + 1) * intervalTicks - nowTicks;
+            I64 waitTicks = epochStartTicks + (curCycle + 1) * intervalTicks - nowTicks;
             I32 sleep_ret = k_sleep(K_TICKS(waitTicks));
             // Assert no one else can wake up the main thread.
             FW_ASSERT(sleep_ret == 0, sleep_ret);
