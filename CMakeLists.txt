@@ -1,7 +1,7 @@
 ####
 # CMakeLists.txt:
 #
-# Just a copy-paste from nasa/fprime to make tests compilable.
+# A copy-paste from nasa/fprime to make tests compilable.
 ####
 cmake_minimum_required(VERSION 3.13)
 project(FPrime C CXX)

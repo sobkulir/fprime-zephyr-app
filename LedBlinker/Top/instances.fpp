@@ -13,49 +13,11 @@ module LedBlinker {
   # Active component instances
   # ----------------------------------------------------------------------
 
-  instance rateGroup1: Svc.ActiveRateGroup base id 0x0200 \
-    queue size Default.QUEUE_SIZE \
-    stack size Default.STACK_SIZE \
-    priority 3 \
-{
-  phase Fpp.ToCpp.Phases.configObjects """
-  K_THREAD_STACK_DEFINE(stack, StackSizes::rateGroup1);
-  """
-
-  phase Fpp.ToCpp.Phases.startTasks """
-  rateGroup1.start(
-    static_cast<NATIVE_UINT_TYPE>(Priorities::rateGroup1),
-    static_cast<NATIVE_UINT_TYPE>(K_THREAD_STACK_SIZEOF(ConfigObjects::rateGroup1::stack)),
-    Os::Task::TASK_DEFAULT, // Default CPU
-    static_cast<NATIVE_UINT_TYPE>(TaskIds::rateGroup1),
-    ConfigObjects::rateGroup1::stack    
-  );
-  """
-}
-
-  instance rateGroup2: Svc.ActiveRateGroup base id 0x0300 \
-    queue size Default.QUEUE_SIZE \
-    stack size Default.STACK_SIZE \
-    priority 3 \
-{
-  phase Fpp.ToCpp.Phases.configObjects """
-  K_THREAD_STACK_DEFINE(stack, StackSizes::rateGroup2);
-  """
-
-  phase Fpp.ToCpp.Phases.startTasks """
-  rateGroup2.start(
-    static_cast<NATIVE_UINT_TYPE>(Priorities::rateGroup2),
-    static_cast<NATIVE_UINT_TYPE>(K_THREAD_STACK_SIZEOF(ConfigObjects::rateGroup2::stack)),
-    Os::Task::TASK_DEFAULT, // Default CPU
-    static_cast<NATIVE_UINT_TYPE>(TaskIds::rateGroup2),
-    ConfigObjects::rateGroup2::stack    
-  );
-  """
-}
+  # Main thread in Zephyr has priority 0. Lower numbers are higher priority.
 instance cmdSeq: Svc.CmdSequencer base id 0x0600 \
   queue size Default.QUEUE_SIZE \
   stack size Default.STACK_SIZE \
-  priority 10 \
+  priority 4 \
 {
   phase Fpp.ToCpp.Phases.configObjects """
   K_THREAD_STACK_DEFINE(stack, StackSizes::cmdSeq);
@@ -115,7 +77,7 @@ instance cmdSeq: Svc.CmdSequencer base id 0x0600 \
   instance tlmSend: Svc.TlmChan base id 0x0C00 \
     queue size Default.QUEUE_SIZE \
     stack size Default.STACK_SIZE \
-    priority 2 \
+    priority 4 \
 {
   phase Fpp.ToCpp.Phases.configObjects """
   K_THREAD_STACK_DEFINE(stack, StackSizes::tlmSend);
@@ -184,11 +146,15 @@ instance cmdSeq: Svc.CmdSequencer base id 0x0600 \
   # ----------------------------------------------------------------------
 
   @ Communications driver.
-  instance comm: Drv.ByteStreamDriverModel base id 0x4000 \
-    type "Components::ZephyrUartDriver" \ # type specified to select implementor of ByteStreamDriverModel
-    at "../../Components/ZephyrUartDriver/ZephyrUartDriver.hpp" # location of above implementor must also be specified
+  instance commUartDriver: Zephyr.ZephyrUartDriver base id 0x4000
 
   instance downlink: Svc.Framer base id 0x4100
+
+  instance rateGroup1: Svc.PassiveRateGroup base id 0x1000
+
+  instance rateGroup2: Svc.PassiveRateGroup base id 0x1200
+
+  instance zephyrRateDriver: Zephyr.ZephyrRateDriver base id 0x1100
 
   instance rateGroupDriver: Svc.RateGroupDriver base id 0x4600
 
@@ -203,7 +169,5 @@ instance cmdSeq: Svc.CmdSequencer base id 0x0600 \
   instance helloWorld: Components.HelloWorld base id 0x0F00
 
   instance zephyrTime: Components.ZephyrTime base id 0x4500
-
-  instance zephyrTimer: Components.ZephyrTimer base id 0x1000
   
 }

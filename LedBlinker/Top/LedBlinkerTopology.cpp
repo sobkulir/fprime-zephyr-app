@@ -6,6 +6,7 @@
 // Provides access to autocoded functions
 #include <LedBlinker/Top/LedBlinkerTopologyAc.hpp>
 #include <LedBlinker/Top/LedBlinkerPacketsAc.hpp>
+#include <config/FppConstantsAc.hpp>
 
 // Necessary project-specified types
 #include <Fw/Types/MallocAllocator.hpp>
@@ -16,6 +17,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/device.h>
 #include <zephyr/devicetree.h>
+#include <zephyr/sys_clock.h>
 
 #define UART_DEVICE_NODE DT_NODELABEL(usart2)
 
@@ -39,12 +41,12 @@ Svc::FprimeFraming framing;
 Svc::FprimeDeframing deframing;
 
 // The reference topology divides the incoming clock signal (1Hz) into sub-signals: 1Hz, 1/2Hz, and 1/4Hz
-NATIVE_INT_TYPE rateGroupDivisors[Svc::RateGroupDriver::DIVIDER_SIZE] = {1, 10};
+NATIVE_INT_TYPE rateGroupDivisors[Svc::RateGroupDriver::DIVIDER_SIZE] = {1, 500};
 
 // Rate groups may supply a context token to each of the attached children whose purpose is set by the project. The
 // reference topology sets each token to zero as these contexts are unused in this project.
-NATIVE_INT_TYPE rateGroup1Context[Svc::ActiveRateGroup::CONNECTION_COUNT_MAX] = {};
-NATIVE_INT_TYPE rateGroup2Context[Svc::ActiveRateGroup::CONNECTION_COUNT_MAX] = {};
+NATIVE_INT_TYPE rateGroup1Context[FppConstant_PassiveRateGroupOutputPorts::PassiveRateGroupOutputPorts] = {};
+NATIVE_INT_TYPE rateGroup2Context[FppConstant_PassiveRateGroupOutputPorts::PassiveRateGroupOutputPorts] = {};
 
 // // A number of constants are needed for construction of the topology. These are specified here.
 enum TopologyConstants {
@@ -106,11 +108,7 @@ void configureTopology() {
     upBuffMgrBins.bins[0].numBuffers = UPLINK_BUFFER_MANAGER_QUEUE_SIZE;
     fileUplinkBufferManager.setup(UPLINK_BUFFER_MANAGER_ID, 0, mallocator, upBuffMgrBins);
 
-    comm.setup(
-        uart,
-        /*readTaskPriority=*/40,
-        static_cast<NATIVE_UINT_TYPE>(K_THREAD_STACK_SIZEOF(uartDriverReadTaskStack)),
-        uartDriverReadTaskStack);
+
     // Note: Uncomment when using Svc:TlmPacketizer
     // tlmSend.setPacketList(LedBlinkerPacketsPkts, LedBlinkerPacketsIgnore, 1);
 }
@@ -148,14 +146,9 @@ void setupTopology(const TopologyState& state) {
     // loadParameters();
     // Autocoded task kick-off (active components). Function provided by autocoder.
     startTasks(state);
-}
 
-void startSimulatedCycle(U32 milliseconds) {
-    while (true) {
-        LedBlinker::zephyrTimer.tick();
-        k_sleep(K_MSEC(milliseconds));
-
-    }
+    zephyrRateDriver.configure(/*intervalUs=*/1 * USEC_PER_MSEC);
+    commUartDriver.configure(uart, 115200);
 }
 
 };  // namespace LedBlinker

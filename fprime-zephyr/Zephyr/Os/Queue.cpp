@@ -5,7 +5,7 @@
 #include <cstring>
 
 #define ZEPHYR_Q_MAX_MSG_SIZE 300
-// U8 is reserved for the message size
+// U16 is reserved for the message size
 #define ZEPHYR_Q_RESERVED (sizeof(U16))
 #define ZEPHYR_Q_MAX_USER_MSG_SIZE (ZEPHYR_Q_MAX_MSG_SIZE - ZEPHYR_Q_RESERVED)
 

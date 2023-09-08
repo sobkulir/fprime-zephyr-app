@@ -25,12 +25,13 @@ module LedBlinker {
     instance tlmSend
     instance cmdDisp
     instance cmdSeq
-    instance comm
+    instance commUartDriver
     instance downlink
     instance eventLogger
+    instance zephyrRateDriver
+    instance rateGroupDriver
     instance rateGroup1
     instance rateGroup2
-    instance rateGroupDriver
     instance staticMemory
     instance fileUplink
     instance fileUplinkBufferManager
@@ -38,7 +39,6 @@ module LedBlinker {
     instance uplink
     instance zephyrTime
     instance helloWorld
-    instance zephyrTimer
 
     # ----------------------------------------------------------------------
     # Pattern graph specifiers
@@ -68,10 +68,10 @@ module LedBlinker {
       # # fileDownlink.bufferSendOut -> downlink.bufferIn
 
       downlink.framedAllocate -> staticMemory.bufferAllocate[Ports_StaticMemory.downlink]
-      downlink.framedOut -> comm.send
+      downlink.framedOut -> commUartDriver.send
       # # downlink.bufferDeallocate -> fileDownlink.bufferReturn
 
-      comm.deallocate -> staticMemory.bufferDeallocate[Ports_StaticMemory.downlink]
+      commUartDriver.deallocate -> staticMemory.bufferDeallocate[Ports_StaticMemory.downlink]
 
     }
 
@@ -80,17 +80,18 @@ module LedBlinker {
     }
 
     connections RateGroups {
-      zephyrTimer.CycleOut -> rateGroupDriver.CycleIn
+      zephyrRateDriver.CycleOut -> rateGroupDriver.CycleIn
       
       # Rate group 1
       rateGroupDriver.CycleOut[Ports_RateGroups.rateGroup1] -> rateGroup1.CycleIn
-      rateGroup1.RateGroupMemberOut[0] -> tlmSend.Run
-      rateGroup1.RateGroupMemberOut[1] -> cmdSeq.schedIn
+      rateGroup1.RateGroupMemberOut[0] -> commUartDriver.schedIn
+      rateGroup1.RateGroupMemberOut[1] -> helloWorld.schedIn
 
       # Rate group 2
       rateGroupDriver.CycleOut[Ports_RateGroups.rateGroup2] -> rateGroup2.CycleIn
-      rateGroup2.RateGroupMemberOut[0] -> helloWorld.schedIn
-      rateGroup2.RateGroupMemberOut[1] -> fileUplinkBufferManager.schedIn
+      rateGroup2.RateGroupMemberOut[0] -> fileUplinkBufferManager.schedIn
+      rateGroup2.RateGroupMemberOut[1] -> tlmSend.Run
+      rateGroup2.RateGroupMemberOut[2] -> cmdSeq.schedIn
     }
 
     connections Sequencer {
@@ -100,8 +101,8 @@ module LedBlinker {
 
     connections Uplink {
 
-      comm.allocate -> staticMemory.bufferAllocate[Ports_StaticMemory.uplink]
-      comm.$recv -> uplink.framedIn
+      commUartDriver.allocate -> staticMemory.bufferAllocate[Ports_StaticMemory.uplink]
+      commUartDriver.$recv -> uplink.framedIn
 
       uplink.framedDeallocate -> staticMemory.bufferDeallocate[Ports_StaticMemory.uplink]
 

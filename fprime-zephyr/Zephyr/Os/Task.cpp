@@ -34,6 +34,7 @@ namespace Os {
         this->m_routineWrapper.routine = routine;
         this->m_routineWrapper.arg = arg;
 
+        Task::s_numTasks++;
         // If a registry has been registered, register task
         if (Task::s_taskRegistry) {
             Task::s_taskRegistry->addTask(this);
@@ -54,6 +55,7 @@ namespace Os {
 
         // Uncomment to allow threads allocating memory from kernel heap.
         // k_thread_system_pool_assign(thread);
+        
         return TASK_OK;
     }
 

@@ -5,6 +5,7 @@
 // ======================================================================
 // Used to access topology functions
 #include <LedBlinker/Top/LedBlinkerTopology.hpp>
+#include <LedBlinker/Top/LedBlinkerTopologyAc.hpp>
 #include <zephyr/kernel.h>
 
 #include <zephyr/device.h>
@@ -85,6 +86,7 @@ int main()
     printk("Setting up topology\n");
     LedBlinker::setupTopology(inputs);
     printk("Topology running, entering simulatedCycle.\n");
-    startSimulatedCycle(100);
-    return 0;
+	zephyrRateDriver.cycle();
+    
+	return 0;
 }
