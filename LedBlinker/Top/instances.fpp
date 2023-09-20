@@ -210,6 +210,8 @@ instance cmdSeq: Svc.CmdSequencer base id 0x0600 \
 
   instance helloWorld: Components.HelloWorld base id 0x0F00
 
-  instance zephyrTime: Components.ZephyrTime base id 0x4500
-  
+  instance zephyrTime: Svc.Time base id 0x4500 \
+    type "Svc::ZephyrTimeImpl" \
+    at "../../fprime-zephyr/Zephyr/Drv/ZephyrTime/ZephyrTimeImpl.hpp"
+
 }

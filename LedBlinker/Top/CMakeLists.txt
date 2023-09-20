@@ -13,6 +13,7 @@ set(SOURCE_FILES
 )
 set(MOD_DEPS
   Fw/Logger
+  Zephyr/Drv/ZephyrTime
   # Svc/LinuxTime
   # Communication Implementations
   # Drv/Udp
