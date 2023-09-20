@@ -9,6 +9,9 @@
         <channel name="fileUplinkBufferManager.HiBuffs"/>
         <channel name="fileUplink.FilesReceived"/>
         <channel name="fileUplink.PacketsReceived"/>
+        <channel name="fileDownlink.FilesSent"/>
+        <channel name="fileDownlink.PacketsSent"/>
+        <channel name="fileManager.CommandsExecuted"/>
         <channel name="cmdSeq.CS_LoadCommands"/>
         <channel name="cmdSeq.CS_CancelCommands"/>
         <channel name="cmdSeq.CS_CommandsExecuted"/>
@@ -22,8 +25,14 @@
         <channel name="rateGroup2.MaxCycleTime"/>
         <channel name="rateGroup2.CycleTime"/>
         <channel name="rateGroup2.CycleCount"/>
-        
+        <channel name="fileDownlink.Warnings"/>
+
+        <channel name="rateGroup3.MaxCycleTime"/>
+        <channel name="rateGroup3.CycleTime"/>
+        <channel name="rateGroup3.CycleCount"/>
+
         <channel name="fileUplink.Warnings"/>
+        <channel name="fileManager.Errors"/>
         <channel name="cmdSeq.CS_Errors"/>
         <channel name="fileUplinkBufferManager.NoBuffs"/>
         <channel name="fileUplinkBufferManager.EmptyBuffs"/>

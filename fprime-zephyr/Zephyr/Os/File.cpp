@@ -4,15 +4,17 @@
 #include <zephyr/kernel.h>
 #include <zephyr/fs/fs.h>
 
-#define DEBUG_PRINT(x,...) printk(x,##__VA_ARGS__);
-// #define DEBUG_PRINT(x,...)
+// #define DEBUG_PRINT(x,...) printk(x,##__VA_ARGS__);
+#define DEBUG_PRINT(x,...)
 
 namespace Os {
 
     File::File() :m_fd(-1),m_mode(OPEN_NO_MODE),m_lastError(0) {}
 
     File::~File() {
-        this->close();
+        // Intentionally a noop despite the API saying it will close the file.
+        // See this issue for more info: https://github.com/nasa/fprime/issues/2280
+        // And maybe update this function depending on how it got resolved.
     }
 
     File::Status File::open(const char* fileName, Mode mode) {
@@ -21,6 +23,7 @@ namespace Os {
 
     File::Status File::open(const char* fileName, File::Mode mode, bool include_excl) {
         struct fs_file_t *file = reinterpret_cast<struct fs_file_t *>(k_malloc(sizeof(struct fs_file_t)));
+        DEBUG_PRINT("%s: %p\n", fileName, file);
         if (file == nullptr) {
             FW_ASSERT(0);
             return NO_SPACE;
@@ -54,7 +57,7 @@ namespace Os {
         if (rc < 0) {
             DEBUG_PRINT("Error opening file %s: %d\n", fileName, rc);
             this->m_lastError = rc;
-            free(file);
+            k_free(file);
             return NOT_OPENED;
         }
 
@@ -68,6 +71,7 @@ namespace Os {
         if (this->m_fd == -1) return;
 
         struct fs_file_t *file = reinterpret_cast<struct fs_file_t *>(this->m_fd);
+        DEBUG_PRINT("Closing: %p, m_fd: %d, mode: %d\n", file, this->m_fd, this->m_mode);
         int ret = fs_close(file);
         if (ret < 0) {
             DEBUG_PRINT("Error closing file: %d\n", ret);
@@ -75,8 +79,9 @@ namespace Os {
         FW_ASSERT(ret == 0, ret);
         
         k_free(file);
+
         this->m_fd = -1;
-        return;
+        this->m_mode = OPEN_NO_MODE;
     }
 
     File::Status File::seek(NATIVE_INT_TYPE offset, bool absolute) {

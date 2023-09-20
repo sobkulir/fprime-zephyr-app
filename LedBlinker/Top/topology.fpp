@@ -32,9 +32,12 @@ module LedBlinker {
     instance rateGroupDriver
     instance rateGroup1
     instance rateGroup2
+    instance rateGroup3
     instance staticMemory
     instance fileUplink
     instance fileUplinkBufferManager
+    instance fileDownlink
+    instance fileManager
     instance textLogger
     instance uplink
     instance zephyrTime
@@ -65,11 +68,11 @@ module LedBlinker {
     connections Downlink {
       tlmSend.PktSend -> downlink.comIn
       eventLogger.PktSend -> downlink.comIn
-      # # fileDownlink.bufferSendOut -> downlink.bufferIn
+      fileDownlink.bufferSendOut -> downlink.bufferIn
 
       downlink.framedAllocate -> staticMemory.bufferAllocate[Ports_StaticMemory.downlink]
       downlink.framedOut -> commUartDriver.send
-      # # downlink.bufferDeallocate -> fileDownlink.bufferReturn
+      downlink.bufferDeallocate -> fileDownlink.bufferReturn
 
       commUartDriver.deallocate -> staticMemory.bufferDeallocate[Ports_StaticMemory.downlink]
 
@@ -90,8 +93,12 @@ module LedBlinker {
       # Rate group 2
       rateGroupDriver.CycleOut[Ports_RateGroups.rateGroup2] -> rateGroup2.CycleIn
       rateGroup2.RateGroupMemberOut[0] -> fileUplinkBufferManager.schedIn
-      rateGroup2.RateGroupMemberOut[1] -> tlmSend.Run
-      rateGroup2.RateGroupMemberOut[2] -> cmdSeq.schedIn
+      rateGroup2.RateGroupMemberOut[1] -> cmdSeq.schedIn
+
+       # Rate group 3
+      rateGroupDriver.CycleOut[Ports_RateGroups.rateGroup3] -> rateGroup3.CycleIn
+      rateGroup3.RateGroupMemberOut[0] -> tlmSend.Run
+      rateGroup3.RateGroupMemberOut[1] -> fileDownlink.Run
     }
 
     connections Sequencer {

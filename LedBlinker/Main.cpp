@@ -16,79 +16,65 @@
 
 #include <zephyr/sys_clock.h>
 
-LOG_MODULE_REGISTER(main);
+#include <zephyr/drivers/gpio.h>
 
-static int littlefs_flash_erase(unsigned int id)
-{
-	const struct flash_area *pfa;
-	int rc;
+#define SPI_NHOLD_NODE DT_ALIAS(spi_nhold)
+#define SPI_NWP_NODE DT_ALIAS(spi_nwp)
 
-	rc = flash_area_open(id, &pfa);
-	if (rc < 0) {
-		LOG_ERR("FAIL: unable to find flash area %u: %d\n",
-			id, rc);
-		return rc;
-	}
 
-	LOG_PRINTK("Area %u at 0x%x on %s for %u bytes\n",
-		   id, (unsigned int)pfa->fa_off, pfa->fa_dev->name,
-		   (unsigned int)pfa->fa_size);
+static const struct gpio_dt_spec spi_nhold_pin = GPIO_DT_SPEC_GET(SPI_NHOLD_NODE, gpios);
+static const struct gpio_dt_spec spi_nwp_pin = GPIO_DT_SPEC_GET(SPI_NWP_NODE, gpios);
 
-	/* Optional wipe flash contents */
-	if (IS_ENABLED(CONFIG_APP_WIPE_STORAGE)) {
-		rc = flash_area_erase(pfa, 0, pfa->fa_size);
-		LOG_ERR("Erasing flash area ... %d", rc);
-	}
-
-	flash_area_close(pfa);
-	return rc;
-}
 #define PARTITION_NODE DT_NODELABEL(lfs1)
-
 FS_FSTAB_DECLARE_ENTRY(PARTITION_NODE);
 
-struct fs_mount_t *mp = &FS_FSTAB_ENTRY(PARTITION_NODE);
-
-static int littlefs_mount(struct fs_mount_t *mp)
-{
-	int rc;
-
-	rc = littlefs_flash_erase((uintptr_t)mp->storage_dev);
-	if (rc < 0) {
-		return rc;
-	}
-
-	/* Do not mount if auto-mount has been enabled */
-#if !DT_NODE_EXISTS(PARTITION_NODE) ||						\
-	!(FSTAB_ENTRY_DT_MOUNT_FLAGS(PARTITION_NODE) & FS_MOUNT_FLAG_AUTOMOUNT)
-	rc = fs_mount(mp);
-	if (rc < 0) {
-		LOG_PRINTK("FAIL: mount id %" PRIuPTR " at %s: %d\n",
-		       (uintptr_t)mp->storage_dev, mp->mnt_point, rc);
-		return rc;
-	}
-	LOG_PRINTK("%s mount: %d\n", mp->mnt_point, rc);
-#else
-	LOG_PRINTK("%s automounted\n", mp->mnt_point);
-#endif
-
-	return 0;
-}
-
+LOG_MODULE_REGISTER(main);
 
 int main()
 {
-    int rc;
-	rc = littlefs_mount(mp);
-	if (rc < 0) {
-		return 1;
-	}
+    int ret;
+    struct fs_mount_t *mp = &FS_FSTAB_ENTRY(PARTITION_NODE);
+
+/*
+    if (!gpio_is_ready_dt(&spi_nhold_pin)) {
+        return;
+    }*/
+
+    ret = gpio_pin_configure_dt(&spi_nhold_pin, GPIO_OUTPUT_HIGH);
+    if (ret < 0) {
+        return 1;
+    }
+/*
+    if (!gpio_is_ready_dt(&spi_nwp_pin)) {
+        return;
+    }*/
+
+    ret = gpio_pin_configure_dt(&spi_nwp_pin, GPIO_OUTPUT_HIGH);
+    if (ret < 0) {
+        return 1;
+    }
+
+    if (IS_ENABLED(CONFIG_APP_WIPE_STORAGE)) {
+        ret = fs_mkfs(FS_LITTLEFS, (uintptr_t)FIXED_PARTITION_ID(storage_partition), mp->fs_data, 0);
+        if (ret < 0) {
+            return 1;
+        }
+    }
+    
+    ret = fs_mount(mp);
+    if (ret < 0) {
+        LOG_PRINTK("FAIL: mount id %" PRIuPTR " at %s: %d\n",
+               (uintptr_t)mp->storage_dev, mp->mnt_point, ret);
+        return 1;
+    }
 
     LedBlinker::TopologyState inputs;
     printk("Setting up topology\n");
     LedBlinker::setupTopology(inputs);
     printk("Topology running, entering simulatedCycle.\n");
-	zephyrRateDriver.cycle(/*intervalUs=*/1 * USEC_PER_MSEC);
-    
-	return 0;
+    zephyrRateDriver.cycle(/*intervalUs=*/1 * USEC_PER_MSEC);
+
+    // Should be never executed.
+    while (1) ; 
+    return 0;
 }

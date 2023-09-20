@@ -114,8 +114,8 @@ instance cmdSeq: Svc.CmdSequencer base id 0x0600 \
   """
 }
 
-    instance fileUplink: Svc.FileUplink base id 0x0900 \
-    queue size 10 \
+  instance fileUplink: Svc.FileUplink base id 0x0900 \
+    queue size Default.QUEUE_SIZE \
     stack size Default.STACK_SIZE \
     priority 10 \
 {
@@ -130,6 +130,46 @@ instance cmdSeq: Svc.CmdSequencer base id 0x0600 \
     Os::Task::TASK_DEFAULT, // Default CPU
     static_cast<NATIVE_UINT_TYPE>(TaskIds::fileUplink),
     ConfigObjects::fileUplink::stack    
+  );
+  """
+}
+
+  instance fileDownlink: Svc.FileDownlink base id 0x0700 \
+    queue size Default.QUEUE_SIZE \
+    stack size Default.STACK_SIZE \
+    priority 10 \
+{
+  phase Fpp.ToCpp.Phases.configObjects """
+  K_THREAD_STACK_DEFINE(stack, StackSizes::fileDownlink);
+  """
+
+  phase Fpp.ToCpp.Phases.startTasks """
+  fileDownlink.start(
+    static_cast<NATIVE_UINT_TYPE>(Priorities::fileDownlink),
+    static_cast<NATIVE_UINT_TYPE>(K_THREAD_STACK_SIZEOF(ConfigObjects::fileDownlink::stack)),
+    Os::Task::TASK_DEFAULT, // Default CPU
+    static_cast<NATIVE_UINT_TYPE>(TaskIds::fileDownlink),
+    ConfigObjects::fileDownlink::stack    
+  );
+  """
+}
+
+  instance fileManager: Svc.FileManager base id 0x0800 \
+    queue size Default.QUEUE_SIZE \
+    stack size 40  * 1024 \
+    priority 10 \
+{
+  phase Fpp.ToCpp.Phases.configObjects """
+  K_THREAD_STACK_DEFINE(stack, StackSizes::fileManager);
+  """
+
+  phase Fpp.ToCpp.Phases.startTasks """
+  fileManager.start(
+    static_cast<NATIVE_UINT_TYPE>(Priorities::fileManager),
+    static_cast<NATIVE_UINT_TYPE>(K_THREAD_STACK_SIZEOF(ConfigObjects::fileManager::stack)),
+    Os::Task::TASK_DEFAULT, // Default CPU
+    static_cast<NATIVE_UINT_TYPE>(TaskIds::fileManager),
+    ConfigObjects::fileManager::stack    
   );
   """
 }
@@ -153,6 +193,8 @@ instance cmdSeq: Svc.CmdSequencer base id 0x0600 \
   instance rateGroup1: Svc.PassiveRateGroup base id 0x1000
 
   instance rateGroup2: Svc.PassiveRateGroup base id 0x1200
+
+  instance rateGroup3: Svc.PassiveRateGroup base id 0x1300
 
   instance zephyrRateDriver: Zephyr.ZephyrRateDriver base id 0x1100
 

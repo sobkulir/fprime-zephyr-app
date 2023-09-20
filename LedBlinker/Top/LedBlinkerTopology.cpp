@@ -38,20 +38,21 @@ Svc::FprimeFraming framing;
 Svc::FprimeDeframing deframing;
 
 // The reference topology divides the incoming clock signal (1Hz) into sub-signals: 1Hz, 1/2Hz, and 1/4Hz
-NATIVE_INT_TYPE rateGroupDivisors[Svc::RateGroupDriver::DIVIDER_SIZE] = {1, 500};
+NATIVE_INT_TYPE rateGroupDivisors[Svc::RateGroupDriver::DIVIDER_SIZE] = {1, 100, 500};
 
 // Rate groups may supply a context token to each of the attached children whose purpose is set by the project. The
 // reference topology sets each token to zero as these contexts are unused in this project.
 NATIVE_INT_TYPE rateGroup1Context[FppConstant_PassiveRateGroupOutputPorts::PassiveRateGroupOutputPorts] = {};
 NATIVE_INT_TYPE rateGroup2Context[FppConstant_PassiveRateGroupOutputPorts::PassiveRateGroupOutputPorts] = {};
+NATIVE_INT_TYPE rateGroup3Context[FppConstant_PassiveRateGroupOutputPorts::PassiveRateGroupOutputPorts] = {};
 
 // // A number of constants are needed for construction of the topology. These are specified here.
 enum TopologyConstants {
     CMD_SEQ_BUFFER_SIZE = 3 * 1024,
-    // FILE_DOWNLINK_TIMEOUT = 1000,
-    // FILE_DOWNLINK_COOLDOWN = 1000,
-    // FILE_DOWNLINK_CYCLE_TIME = 1000,
-    // FILE_DOWNLINK_FILE_QUEUE_DEPTH = 10,
+    FILE_DOWNLINK_TIMEOUT = 1000,
+    FILE_DOWNLINK_COOLDOWN = 1000,
+    FILE_DOWNLINK_CYCLE_TIME = 500,
+    FILE_DOWNLINK_FILE_QUEUE_DEPTH = 10,
     // HEALTH_WATCHDOG_CODE = 0x123,
     // COMM_PRIORITY = 100,
     UPLINK_BUFFER_MANAGER_STORE_SIZE = 1000,
@@ -90,6 +91,7 @@ void configureTopology() {
     // Rate groups require context arrays.
     rateGroup1.configure(rateGroup1Context, FW_NUM_ARRAY_ELEMENTS(rateGroup1Context));
     rateGroup2.configure(rateGroup2Context, FW_NUM_ARRAY_ELEMENTS(rateGroup2Context));
+    rateGroup3.configure(rateGroup3Context, FW_NUM_ARRAY_ELEMENTS(rateGroup3Context));
 
     // Health is supplied a set of ping entires.
     // health.setPingEntries(pingEntries, FW_NUM_ARRAY_ELEMENTS(pingEntries), HEALTH_WATCHDOG_CODE);
@@ -104,7 +106,9 @@ void configureTopology() {
     upBuffMgrBins.bins[0].bufferSize = UPLINK_BUFFER_MANAGER_STORE_SIZE;
     upBuffMgrBins.bins[0].numBuffers = UPLINK_BUFFER_MANAGER_QUEUE_SIZE;
     fileUplinkBufferManager.setup(UPLINK_BUFFER_MANAGER_ID, 0, mallocator, upBuffMgrBins);
-
+    // File downlink requires some project-derived properties.
+    fileDownlink.configure(FILE_DOWNLINK_TIMEOUT, FILE_DOWNLINK_COOLDOWN, FILE_DOWNLINK_CYCLE_TIME,
+                           FILE_DOWNLINK_FILE_QUEUE_DEPTH);
 
     // Note: Uncomment when using Svc:TlmPacketizer
     // tlmSend.setPacketList(LedBlinkerPacketsPkts, LedBlinkerPacketsIgnore, 1);
