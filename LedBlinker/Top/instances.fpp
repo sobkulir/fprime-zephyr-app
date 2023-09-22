@@ -6,7 +6,7 @@ module LedBlinker {
 
   module Default {
     constant QUEUE_SIZE = 10
-    constant STACK_SIZE = 22 * 1024
+    constant STACK_SIZE = 10 * 1024
   }
 
   # ----------------------------------------------------------------------
@@ -155,7 +155,7 @@ instance cmdSeq: Svc.CmdSequencer base id 0x0600 \
 
   instance fileManager: Svc.FileManager base id 0x0800 \
     queue size Default.QUEUE_SIZE \
-    stack size 40  * 1024 \
+    stack size Default.STACK_SIZE \
     priority 10 \
 {
   phase Fpp.ToCpp.Phases.configObjects """
@@ -205,8 +205,6 @@ instance cmdSeq: Svc.CmdSequencer base id 0x0600 \
   instance fileUplinkBufferManager: Svc.BufferManager base id 0x4400
 
   instance uplink: Svc.Deframer base id 0x4900
-
-  instance helloWorld: Components.HelloWorld base id 0x0F00
 
   instance zephyrTime: Svc.Time base id 0x4500 \
     type "Svc::ZephyrTimeImpl" \

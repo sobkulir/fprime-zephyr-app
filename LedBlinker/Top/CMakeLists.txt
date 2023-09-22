@@ -19,7 +19,6 @@ set(MOD_DEPS
   # Communication Implementations
   # Drv/Udp
   # Drv/TcpClient
-  Components/HelloWorld
 )
 
 register_fprime_module()

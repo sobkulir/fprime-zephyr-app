@@ -42,7 +42,6 @@ module LedBlinker {
     instance prmDb
     instance uplink
     instance zephyrTime
-    instance helloWorld
     instance ledGpioDriver
     instance led
     # ----------------------------------------------------------------------
@@ -90,7 +89,6 @@ module LedBlinker {
       # Rate group 1
       rateGroupDriver.CycleOut[Ports_RateGroups.rateGroup1] -> rateGroup1.CycleIn
       rateGroup1.RateGroupMemberOut[0] -> commUartDriver.schedIn
-      rateGroup1.RateGroupMemberOut[1] -> helloWorld.schedIn
 
       # Rate group 2
       rateGroupDriver.CycleOut[Ports_RateGroups.rateGroup2] -> rateGroup2.CycleIn

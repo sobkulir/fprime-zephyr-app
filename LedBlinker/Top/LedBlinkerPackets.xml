@@ -41,7 +41,6 @@
     </packet>
 
     <ignore>
-        <channel name="helloWorld.GreetingCount"/>
 
     </ignore>
 </packets>
