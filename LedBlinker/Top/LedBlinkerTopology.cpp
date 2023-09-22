@@ -9,18 +9,24 @@
 #include <config/FppConstantsAc.hpp>
 
 // Necessary project-specified types
-#include <Fw/Types/MallocAllocator.hpp>
 #include <Os/Log.hpp>
 #include <Svc/FramingProtocol/FprimeProtocol.hpp>
 #include <Svc/BufferManager/BufferManager.hpp>
+#include <Zephyr/Drv/ZephyrGpioDriver/ZephyrGpioDriver.hpp>
+#include <Zephyr/Fw/ZephyrMallocAllocator/ZephyrMallocAllocator.hpp>
 
 #include <zephyr/kernel.h>
 #include <zephyr/device.h>
 #include <zephyr/devicetree.h>
+#include <zephyr/drivers/gpio.h>
 
 #define UART_DEVICE_NODE DT_NODELABEL(usart2)
-
 const struct device *const uart = DEVICE_DT_GET(UART_DEVICE_NODE);
+
+/* The devicetree node identifier for the "led0" alias. */
+#define LED0_NODE DT_ALIAS(led0)
+static struct gpio_dt_spec led_gpio = GPIO_DT_SPEC_GET(LED0_NODE, gpios);
+
 
 // Allows easy reference to objects in FPP/autocoder required namespaces
 using namespace LedBlinker;
@@ -30,7 +36,7 @@ Os::Log logger;
 
 // The reference topology uses a malloc-based allocator for components that need to allocate memory during the
 // initialization phase.
-Fw::MallocAllocator mallocator;
+Fw::ZephyrMallocAllocator mallocator;
 
 // The reference topology uses the F´ packet protocol when communicating with the ground and therefore uses the F´
 // framing and deframing implementations.
@@ -96,6 +102,10 @@ void configureTopology() {
     // Health is supplied a set of ping entires.
     // health.setPingEntries(pingEntries, FW_NUM_ARRAY_ELEMENTS(pingEntries), HEALTH_WATCHDOG_CODE);
 
+    // Parameter database is configured with a database file name, and that file must be initially read.
+    prmDb.configure("/seq/PrmDb.dat");
+    prmDb.readParamFile();
+
     // Framer and Deframer components need to be passed a protocol handler
     downlink.setup(framing);
     uplink.setup(deframing);
@@ -109,6 +119,9 @@ void configureTopology() {
     // File downlink requires some project-derived properties.
     fileDownlink.configure(FILE_DOWNLINK_TIMEOUT, FILE_DOWNLINK_COOLDOWN, FILE_DOWNLINK_CYCLE_TIME,
                            FILE_DOWNLINK_FILE_QUEUE_DEPTH);
+
+    bool led_gpio_opened = ledGpioDriver.open(&led_gpio, Drv::ZephyrGpioDriver::GpioDirection::OUT);
+    FW_ASSERT(led_gpio_opened);
 
     // Note: Uncomment when using Svc:TlmPacketizer
     // tlmSend.setPacketList(LedBlinkerPacketsPkts, LedBlinkerPacketsIgnore, 1);
@@ -145,11 +158,13 @@ void setupTopology(const TopologyState& state) {
     // Project-specific component configuration. Function provided above. May be inlined, if desired.
     configureTopology();
     // Autocoded parameter loading. Function provided by autocoder.
-    // loadParameters();
+    loadParameters();
     // Autocoded task kick-off (active components). Function provided by autocoder.
     startTasks(state);
 
     commUartDriver.configure(uart, 115200);
+    FW_ASSERT(led.configureDefaultState());
+
 }
 
 };  // namespace LedBlinker

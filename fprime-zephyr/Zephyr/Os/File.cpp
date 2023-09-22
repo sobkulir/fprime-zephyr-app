@@ -12,9 +12,10 @@ namespace Os {
     File::File() :m_fd(-1),m_mode(OPEN_NO_MODE),m_lastError(0) {}
 
     File::~File() {
-        // Intentionally a noop despite the API saying it will close the file.
+        // Closing the file here is potentially dangerous, but some F Prime components,
+        // for example `PrmDb::PRM_SAVE_FILE_cmdHandler` depend on it.
         // See this issue for more info: https://github.com/nasa/fprime/issues/2280
-        // And maybe update this function depending on how it got resolved.
+        this->close();
     }
 
     File::Status File::open(const char* fileName, Mode mode) {

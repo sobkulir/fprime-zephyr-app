@@ -14,6 +14,12 @@ module LedBlinker {
   # ----------------------------------------------------------------------
 
   # Main thread in Zephyr has priority 0. Lower numbers are higher priority.
+  #
+  # The definition of active components is so elaborate because we need to
+  # pass in the static stack (other OSes typically allocate the stack on
+  # heap).
+  # Hack: Pointer to the stack is passed through the cpuAffinity, since
+  #       we don't need the cpuAffinity as we only have single core.
 instance cmdSeq: Svc.CmdSequencer base id 0x0600 \
   queue size Default.QUEUE_SIZE \
   stack size Default.STACK_SIZE \
@@ -27,9 +33,8 @@ instance cmdSeq: Svc.CmdSequencer base id 0x0600 \
   cmdSeq.start(
     static_cast<NATIVE_UINT_TYPE>(Priorities::cmdSeq),
     static_cast<NATIVE_UINT_TYPE>(K_THREAD_STACK_SIZEOF(ConfigObjects::cmdSeq::stack)),
-    Os::Task::TASK_DEFAULT, // Default CPU
-    static_cast<NATIVE_UINT_TYPE>(TaskIds::cmdSeq),
-    ConfigObjects::cmdSeq::stack    
+    /*cpuAffinity=*/reinterpret_cast<NATIVE_UINT_TYPE>(ConfigObjects::cmdSeq::stack), // This is a hack.
+    static_cast<NATIVE_UINT_TYPE>(TaskIds::cmdSeq)
   );
   """
 }
@@ -47,9 +52,8 @@ instance cmdSeq: Svc.CmdSequencer base id 0x0600 \
   cmdDisp.start(
     static_cast<NATIVE_UINT_TYPE>(Priorities::cmdDisp),
     static_cast<NATIVE_UINT_TYPE>(K_THREAD_STACK_SIZEOF(ConfigObjects::cmdDisp::stack)),
-    Os::Task::TASK_DEFAULT, // Default CPU
-    static_cast<NATIVE_UINT_TYPE>(TaskIds::cmdDisp),
-    ConfigObjects::cmdDisp::stack    
+    /*cpuAffinity=*/reinterpret_cast<NATIVE_UINT_TYPE>(ConfigObjects::cmdDisp::stack), // This is a hack.
+    static_cast<NATIVE_UINT_TYPE>(TaskIds::cmdDisp)
   );
   """
 }
@@ -67,9 +71,8 @@ instance cmdSeq: Svc.CmdSequencer base id 0x0600 \
   eventLogger.start(
     static_cast<NATIVE_UINT_TYPE>(Priorities::eventLogger),
     static_cast<NATIVE_UINT_TYPE>(K_THREAD_STACK_SIZEOF(ConfigObjects::eventLogger::stack)),
-    Os::Task::TASK_DEFAULT, // Default CPU
-    static_cast<NATIVE_UINT_TYPE>(TaskIds::eventLogger),
-    ConfigObjects::eventLogger::stack    
+    /*cpuAffinity=*/reinterpret_cast<NATIVE_UINT_TYPE>(ConfigObjects::eventLogger::stack), // This is a hack.
+    static_cast<NATIVE_UINT_TYPE>(TaskIds::eventLogger)
   );
   """
 }
@@ -87,9 +90,8 @@ instance cmdSeq: Svc.CmdSequencer base id 0x0600 \
   tlmSend.start(
     static_cast<NATIVE_UINT_TYPE>(Priorities::tlmSend),
     static_cast<NATIVE_UINT_TYPE>(K_THREAD_STACK_SIZEOF(ConfigObjects::tlmSend::stack)),
-    Os::Task::TASK_DEFAULT, // Default CPU
-    static_cast<NATIVE_UINT_TYPE>(TaskIds::tlmSend),
-    ConfigObjects::tlmSend::stack    
+    /*cpuAffinity=*/reinterpret_cast<NATIVE_UINT_TYPE>(ConfigObjects::tlmSend::stack), // This is a hack.
+    static_cast<NATIVE_UINT_TYPE>(TaskIds::tlmSend)
   );
   """
 }
@@ -107,9 +109,8 @@ instance cmdSeq: Svc.CmdSequencer base id 0x0600 \
   prmDb.start(
     static_cast<NATIVE_UINT_TYPE>(Priorities::prmDb),
     static_cast<NATIVE_UINT_TYPE>(K_THREAD_STACK_SIZEOF(ConfigObjects::prmDb::stack)),
-    Os::Task::TASK_DEFAULT, // Default CPU
-    static_cast<NATIVE_UINT_TYPE>(TaskIds::prmDb),
-    ConfigObjects::prmDb::stack    
+    /*cpuAffinity=*/reinterpret_cast<NATIVE_UINT_TYPE>(ConfigObjects::prmDb::stack), // This is a hack.
+    static_cast<NATIVE_UINT_TYPE>(TaskIds::prmDb)
   );
   """
 }
@@ -127,9 +128,8 @@ instance cmdSeq: Svc.CmdSequencer base id 0x0600 \
   fileUplink.start(
     static_cast<NATIVE_UINT_TYPE>(Priorities::fileUplink),
     static_cast<NATIVE_UINT_TYPE>(K_THREAD_STACK_SIZEOF(ConfigObjects::fileUplink::stack)),
-    Os::Task::TASK_DEFAULT, // Default CPU
-    static_cast<NATIVE_UINT_TYPE>(TaskIds::fileUplink),
-    ConfigObjects::fileUplink::stack    
+    /*cpuAffinity=*/reinterpret_cast<NATIVE_UINT_TYPE>(ConfigObjects::fileUplink::stack), // This is a hack.
+    static_cast<NATIVE_UINT_TYPE>(TaskIds::fileUplink)
   );
   """
 }
@@ -147,9 +147,8 @@ instance cmdSeq: Svc.CmdSequencer base id 0x0600 \
   fileDownlink.start(
     static_cast<NATIVE_UINT_TYPE>(Priorities::fileDownlink),
     static_cast<NATIVE_UINT_TYPE>(K_THREAD_STACK_SIZEOF(ConfigObjects::fileDownlink::stack)),
-    Os::Task::TASK_DEFAULT, // Default CPU
-    static_cast<NATIVE_UINT_TYPE>(TaskIds::fileDownlink),
-    ConfigObjects::fileDownlink::stack    
+    /*cpuAffinity=*/reinterpret_cast<NATIVE_UINT_TYPE>(ConfigObjects::fileDownlink::stack), // This is a hack.
+    static_cast<NATIVE_UINT_TYPE>(TaskIds::fileDownlink)
   );
   """
 }
@@ -167,9 +166,8 @@ instance cmdSeq: Svc.CmdSequencer base id 0x0600 \
   fileManager.start(
     static_cast<NATIVE_UINT_TYPE>(Priorities::fileManager),
     static_cast<NATIVE_UINT_TYPE>(K_THREAD_STACK_SIZEOF(ConfigObjects::fileManager::stack)),
-    Os::Task::TASK_DEFAULT, // Default CPU
-    static_cast<NATIVE_UINT_TYPE>(TaskIds::fileManager),
-    ConfigObjects::fileManager::stack    
+    /*cpuAffinity=*/reinterpret_cast<NATIVE_UINT_TYPE>(ConfigObjects::fileManager::stack), // This is a hack.
+    static_cast<NATIVE_UINT_TYPE>(TaskIds::fileManager)
   );
   """
 }
@@ -214,4 +212,6 @@ instance cmdSeq: Svc.CmdSequencer base id 0x0600 \
     type "Svc::ZephyrTimeImpl" \
     at "../../fprime-zephyr/Zephyr/Drv/ZephyrTime/ZephyrTimeImpl.hpp"
 
+  instance ledGpioDriver: Drv.ZephyrGpioDriver base id 0x5000
+  instance led: Components.LedDriver base id 0x5100
 }

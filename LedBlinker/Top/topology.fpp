@@ -39,10 +39,12 @@ module LedBlinker {
     instance fileDownlink
     instance fileManager
     instance textLogger
+    instance prmDb
     instance uplink
     instance zephyrTime
     instance helloWorld
-
+    instance ledGpioDriver
+    instance led
     # ----------------------------------------------------------------------
     # Pattern graph specifiers
     # ----------------------------------------------------------------------
@@ -51,7 +53,7 @@ module LedBlinker {
 
     event connections instance eventLogger
 
-    # param connections instance prmDb
+    param connections instance prmDb
 
     telemetry connections instance tlmSend
 
@@ -124,7 +126,7 @@ module LedBlinker {
 
     connections LedBlinker {
       # Add here connections to user-defined components
-      
+      led.gpioSet -> ledGpioDriver.gpioWrite
     }
 
   }

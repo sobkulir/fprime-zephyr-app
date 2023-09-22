@@ -15,11 +15,12 @@ module-str = APP
 
 config FPRIME
 	bool "FPrime Support"
-    select REQUIRES_FULL_LIBCPP
+# Needed because F Prime uses std::numeric_limits<>.
+	select REQUIRES_FULL_LIBCPP
 	help
 	  This option enables support for the F' library
 
 config APP_WIPE_STORAGE
-	bool "Option to clear the flash area before mounting"
+	bool "Option to clear the MRAM area before mounting"
 	help
-	  Use this to force an existing file system to be created.
+	  Use this to force a fresh file system to be created.

@@ -90,6 +90,9 @@ namespace Zephyr {
             NATIVE_UINT_TYPE context
         )
     {
+        // Assert because schedIn should only be called once uart is configured.
+        FW_ASSERT(this->m_dev != nullptr);
+
         Fw::Buffer recv_buffer = this->allocate_out(0, SERIAL_BUFFER_SIZE);
 
         U32 recv_size = ring_buf_get(&this->m_ring_buf, recv_buffer.getData(), recv_buffer.getSize());
@@ -104,6 +107,10 @@ namespace Zephyr {
             Fw::Buffer &sendBuffer
         )
     {
+        if (this->m_dev == nullptr) {
+            return Drv::SendStatus::SEND_ERROR;
+        }
+
         for (U32 i = 0; i < sendBuffer.getSize(); i++) {
             uart_poll_out(this->m_dev, sendBuffer.getData()[i]);
         }

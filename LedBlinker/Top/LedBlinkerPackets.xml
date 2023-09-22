@@ -12,6 +12,7 @@
         <channel name="fileDownlink.FilesSent"/>
         <channel name="fileDownlink.PacketsSent"/>
         <channel name="fileManager.CommandsExecuted"/>
+        <channel name="led.TransitionCount"/>
         <channel name="cmdSeq.CS_LoadCommands"/>
         <channel name="cmdSeq.CS_CancelCommands"/>
         <channel name="cmdSeq.CS_CommandsExecuted"/>

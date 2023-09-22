@@ -21,11 +21,11 @@ namespace Os {
 
     Task::Task() : m_handle(reinterpret_cast<POINTER_CAST>(nullptr)), m_identifier(0), m_affinity(-1), m_started(false), m_suspendedOnPurpose(false), m_routineWrapper() {}
 
-    Task::TaskStatus Task::start(const Fw::StringBase &name, taskRoutine routine, void* arg, NATIVE_UINT_TYPE priority, NATIVE_UINT_TYPE stackSize,  NATIVE_UINT_TYPE cpuAffinity, NATIVE_UINT_TYPE identifier, void* stack) {
-        FW_ASSERT(stack); // Only support statically allocated stacks.
-        FW_ASSERT(cpuAffinity == Task::TASK_DEFAULT); // Zephyr SMP support is not implemented.
+    Task::TaskStatus Task::start(const Fw::StringBase &name, taskRoutine routine, void* arg, NATIVE_UINT_TYPE priority, NATIVE_UINT_TYPE stackSize,  NATIVE_UINT_TYPE cpuAffinity, NATIVE_UINT_TYPE identifier) {
+        FW_ASSERT(cpuAffinity != 0); // A hack, stack address is passed through cpuAffinity 
         FW_ASSERT(routine);
 
+        k_thread_stack_t *stack = reinterpret_cast<k_thread_stack_t *>(cpuAffinity);
         this->m_name = "T_";
         this->m_name += name;
         this->m_identifier = identifier;
@@ -46,7 +46,7 @@ namespace Os {
         }
 
 
-        k_tid_t tid = k_thread_create(thread, reinterpret_cast<k_thread_stack_t *>(stack), stackSize, zephyrEntryWrapper, &this->m_routineWrapper, nullptr, nullptr, priority, 0, K_NO_WAIT);
+        k_tid_t tid = k_thread_create(thread, stack, stackSize, zephyrEntryWrapper, &this->m_routineWrapper, nullptr, nullptr, priority, 0, K_NO_WAIT);
 #ifdef CONFIG_THREAD_NAME
         int ret = k_thread_name_set(thread, this->m_name.toChar());
         FW_ASSERT(ret == 0, ret);
