@@ -6,7 +6,7 @@ module LedBlinker {
 
   module Default {
     constant QUEUE_SIZE = 10
-    constant STACK_SIZE = 10 * 1024
+    constant STACK_SIZE = 12 * 1024
   }
 
   # ----------------------------------------------------------------------
@@ -118,7 +118,7 @@ instance cmdSeq: Svc.CmdSequencer base id 0x0600 \
   instance fileUplink: Svc.FileUplink base id 0x0900 \
     queue size Default.QUEUE_SIZE \
     stack size Default.STACK_SIZE \
-    priority 10 \
+    priority 2 \
 {
   phase Fpp.ToCpp.Phases.configObjects """
   K_THREAD_STACK_DEFINE(stack, StackSizes::fileUplink);
@@ -184,7 +184,7 @@ instance cmdSeq: Svc.CmdSequencer base id 0x0600 \
   # ----------------------------------------------------------------------
 
   @ Communications driver.
-  instance commUartDriver: Zephyr.ZephyrUartDriver base id 0x4000
+  instance commUartDriver: Drv.ZephyrUartDriver base id 0x4000
 
   instance downlink: Svc.Framer base id 0x4100
 
@@ -194,7 +194,7 @@ instance cmdSeq: Svc.CmdSequencer base id 0x0600 \
 
   instance rateGroup3: Svc.PassiveRateGroup base id 0x1300
 
-  instance zephyrRateDriver: Zephyr.ZephyrRateDriver base id 0x1100
+  instance zephyrRateDriver: Drv.ZephyrRateDriver base id 0x1100
 
   instance rateGroupDriver: Svc.RateGroupDriver base id 0x4600
 
@@ -208,7 +208,7 @@ instance cmdSeq: Svc.CmdSequencer base id 0x0600 \
 
   instance zephyrTime: Svc.Time base id 0x4500 \
     type "Svc::ZephyrTimeImpl" \
-    at "../../fprime-zephyr/Zephyr/Drv/ZephyrTime/ZephyrTimeImpl.hpp"
+    at "../../fprime-zephyr/Drv/ZephyrTime/ZephyrTimeImpl.hpp"
 
   instance ledGpioDriver: Drv.ZephyrGpioDriver base id 0x5000
   instance led: Components.LedDriver base id 0x5100

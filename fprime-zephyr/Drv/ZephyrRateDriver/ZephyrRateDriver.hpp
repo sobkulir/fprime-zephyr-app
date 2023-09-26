@@ -7,9 +7,9 @@
 #ifndef ZephyrRateDriver_HPP
 #define ZephyrRateDriver_HPP
 
-#include "Zephyr/Drv/ZephyrRateDriver/ZephyrRateDriverComponentAc.hpp"
+#include "Drv/ZephyrRateDriver/ZephyrRateDriverComponentAc.hpp"
 
-namespace Zephyr {
+namespace Drv {
 
   class ZephyrRateDriver :
     public ZephyrRateDriverComponentBase
@@ -40,6 +40,6 @@ namespace Zephyr {
 
     };
 
-} // end namespace Zephyr
+} // end namespace Drv
 
 #endif

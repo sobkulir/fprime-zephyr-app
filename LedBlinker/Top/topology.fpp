@@ -92,13 +92,14 @@ module LedBlinker {
 
       # Rate group 2
       rateGroupDriver.CycleOut[Ports_RateGroups.rateGroup2] -> rateGroup2.CycleIn
-      rateGroup2.RateGroupMemberOut[0] -> fileUplinkBufferManager.schedIn
       rateGroup2.RateGroupMemberOut[1] -> cmdSeq.schedIn
 
        # Rate group 3
       rateGroupDriver.CycleOut[Ports_RateGroups.rateGroup3] -> rateGroup3.CycleIn
       rateGroup3.RateGroupMemberOut[0] -> tlmSend.Run
       rateGroup3.RateGroupMemberOut[1] -> fileDownlink.Run
+      rateGroup3.RateGroupMemberOut[2] -> fileUplinkBufferManager.schedIn
+      rateGroup3.RateGroupMemberOut[3] -> commUartDriver.schedInTlm
     }
 
     connections Sequencer {

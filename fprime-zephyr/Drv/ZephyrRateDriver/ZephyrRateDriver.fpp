@@ -1,4 +1,4 @@
-module Zephyr {
+module Drv {
 
   @ An interrupt based driver for Arduino rate groups.
   passive component ZephyrRateDriver {

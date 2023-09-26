@@ -5,12 +5,12 @@
 // ======================================================================
 
 
-#include <Zephyr/Drv/ZephyrUartDriver/ZephyrUartDriver.hpp>
+#include <Drv/ZephyrUartDriver/ZephyrUartDriver.hpp>
 #include "Fw/Types/BasicTypes.hpp"
 #include "Fw/Types/Assert.hpp"
 #include <FpConfig.hpp>
 
-namespace Zephyr {
+namespace Drv {
 
     // ----------------------------------------------------------------------
     // Construction, initialization, and destruction
@@ -30,12 +30,15 @@ namespace Zephyr {
 
     }
 
-    void ZephyrUartDriver::configure(const struct device *dev, U32 baud_rate) {
+    int ZephyrUartDriver::configure(const struct device *dev, U32 baud_rate) {
         FW_ASSERT(dev != nullptr);
-        m_dev = dev;
+        FW_ASSERT(baud_rate <= 115200);
 
+        this->m_dev = dev;
+        int ret;
+        
         if (!device_is_ready(this->m_dev)) {
-            return;
+            return -1;
         }
 
         struct uart_config uart_cfg = {
@@ -45,10 +48,20 @@ namespace Zephyr {
             .data_bits = UART_CFG_DATA_BITS_8,
             .flow_ctrl = UART_CFG_FLOW_CTRL_NONE,
         };
-        uart_configure(this->m_dev, &uart_cfg);
+        
+        ret = uart_configure(this->m_dev, &uart_cfg);
+        if (ret < 0) {
+            return ret;
+        }
 
-        ring_buf_init(&this->m_ring_buf, RING_BUF_SIZE, this->m_ring_buf_data);
-        uart_irq_callback_user_data_set(this->m_dev, serial_cb, &this->m_ring_buf);
+        ring_buf_init(&this->m_ring_buf, SERIAL_BUFFER_SIZE, this->m_ring_buf_data);
+        this->m_serial_cb_data.ring_buf = &this->m_ring_buf;
+        this->m_serial_cb_data.buf_overruns = 0;
+
+        ret = uart_irq_callback_user_data_set(this->m_dev, serial_cb, &this->m_serial_cb_data);
+        if (ret < 0) {
+            return ret;
+        }
 
         uart_irq_rx_enable(this->m_dev);
 	    uart_irq_tx_disable(this->m_dev);
@@ -56,11 +69,13 @@ namespace Zephyr {
         if (this->isConnected_ready_OutputPort(0)) {
             this->ready_out(0);
         }
+
+        return 0;
     }
 
     void ZephyrUartDriver::serial_cb(const struct device *dev, void *user_data)
     {
-        struct ring_buf *ring_buf = reinterpret_cast<struct ring_buf *>(user_data);
+        struct serial_cb_data *cb_data = reinterpret_cast<struct serial_cb_data *>(user_data);
 
         if (!uart_irq_update(dev)) {
             return;
@@ -71,13 +86,17 @@ namespace Zephyr {
         }
 
         U8 c;
-        // TODO: Get rid of the endless loop (in an IRQ handler!).
-        while (uart_fifo_read(dev, &c, 1) == 1) {
-            if (ring_buf_put(ring_buf, &c, 1) != 1) {
-                // TODO: Handle properly.
-                printk("UART buffer overrun\n");
+        
+        for (U32 i = 0; i < SERIAL_BUFFER_SIZE; ++i) {
+            int ret = uart_fifo_read(dev, &c, 1);
+            if (ret != 1) {
+                break;
             }
-        }
+
+            if (ring_buf_put(cb_data->ring_buf, &c, 1) != 1) {
+                cb_data->buf_overruns++;
+            }
+        } 
     }
 
     // ----------------------------------------------------------------------
@@ -94,11 +113,21 @@ namespace Zephyr {
         FW_ASSERT(this->m_dev != nullptr);
 
         Fw::Buffer recv_buffer = this->allocate_out(0, SERIAL_BUFFER_SIZE);
+        FW_ASSERT(recv_buffer.getData() != nullptr);
 
         U32 recv_size = ring_buf_get(&this->m_ring_buf, recv_buffer.getData(), recv_buffer.getSize());
         recv_buffer.setSize(recv_size);
 
         recv_out(0, recv_buffer, Drv::RecvStatus::RECV_OK);
+    }
+
+    void ZephyrUartDriver ::
+        schedInTlm_handler(
+            const NATIVE_INT_TYPE portNum,
+            NATIVE_UINT_TYPE context
+        )
+    {
+        this->tlmWrite_BufferOverruns(this->m_serial_cb_data.buf_overruns);
     }
 
     Drv::SendStatus ZephyrUartDriver ::
@@ -121,4 +150,4 @@ namespace Zephyr {
         return Drv::SendStatus::SEND_OK;
     }
 
-} // end namespace Zephyr
+} // end namespace Drv

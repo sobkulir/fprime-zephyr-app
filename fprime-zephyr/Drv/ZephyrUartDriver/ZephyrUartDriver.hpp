@@ -7,22 +7,25 @@
 #ifndef ZephyrUartDriver_HPP
 #define ZephyrUartDriver_HPP
 
-#include "Zephyr/Drv/ZephyrUartDriver/ZephyrUartDriverComponentAc.hpp"
+#include "Drv/ZephyrUartDriver/ZephyrUartDriverComponentAc.hpp"
 
 #include <zephyr/kernel.h>
 #include <zephyr/device.h>
 #include <zephyr/drivers/uart.h>
 #include <zephyr/sys/ring_buffer.h>
 
-#define RING_BUF_SIZE 1024
+// Important: The schedIn is assumed to be called at 500Hz for the RING_BUF_SIZE.
 
-namespace Zephyr {
+namespace Drv {
 
   class ZephyrUartDriver :
     public ZephyrUartDriverComponentBase
   {
 
-    const NATIVE_INT_TYPE SERIAL_BUFFER_SIZE = 64;
+    // At 115200 baud rate, we get at most 115200 / (8 * 1024) ~= 14kB/s.
+    // The buffer-flushing is called at 500Hz, so in theory the buffer needs to be
+    // 14kB / 500Hz at least 28B. We set it to 128B to be safe. 
+    static constexpr NATIVE_INT_TYPE SERIAL_BUFFER_SIZE = 128;
 
     public:
 
@@ -40,9 +43,16 @@ namespace Zephyr {
         //!
         ~ZephyrUartDriver();
 
-        void configure(const struct device *dev, U32 baud_rate);
+        //! Configures the UART device. The `baud_rate` is assumed to be at most 115200.
+        //! \return 0 on success, negative on failure
+        int configure(const struct device *dev, U32 baud_rate);
 
     PRIVATE:
+
+        struct serial_cb_data {
+            struct ring_buf *ring_buf;
+            U32 buf_overruns;
+        };
 
         static void serial_cb(const struct device *dev, void *user_data);
 
@@ -59,6 +69,16 @@ namespace Zephyr {
         */
         );
 
+                //! Handler implementation for schedIn
+        //!
+        void schedInTlm_handler(
+            const NATIVE_INT_TYPE portNum, /*!< The port number*/
+            NATIVE_UINT_TYPE context /*!< 
+        The call order
+        */
+        );
+
+
         //! Handler implementation for send
         //!
         Drv::SendStatus send_handler(
@@ -68,10 +88,12 @@ namespace Zephyr {
 
         const struct device *m_dev;
 
-        U8 m_ring_buf_data[RING_BUF_SIZE];
+        U8 m_ring_buf_data[SERIAL_BUFFER_SIZE];
         struct ring_buf m_ring_buf;
+
+        struct serial_cb_data m_serial_cb_data;
     };
 
-} // end namespace Zephyr
+} // end namespace Drv
 
 #endif

@@ -4,14 +4,14 @@
 // \brief  cpp file for ZephyrRateDriver component implementation class
 // ======================================================================
 
-#include <Zephyr/Drv/ZephyrRateDriver/ZephyrRateDriver.hpp>
+#include <Drv/ZephyrRateDriver/ZephyrRateDriver.hpp>
 #include <FpConfig.hpp>
 #include <Fw/Logger/Logger.hpp>
 #include <Fw/Types/Assert.hpp>
 
 #include <zephyr/kernel.h>
 
-namespace Zephyr
+namespace Drv
 {
 
     // ----------------------------------------------------------------------
@@ -60,7 +60,7 @@ namespace Zephyr
             I64 curCycle = (nowTicks - epochStartTicks) / intervalTicks;
             
             // Asserts on a cycle slip.
-            // Note: Depending on the app, it might be a better idea to send log it as tellemetry instead.
+            // Note: Depending on the app, it might be a better idea to log it as tellemetry instead.
             FW_ASSERT(totalCycles == curCycle, curCycle - totalCycles);
             totalCycles = curCycle + 1;
 
@@ -72,4 +72,4 @@ namespace Zephyr
     }
 
 
-} // end namespace Zephyr
+} // end namespace Drv

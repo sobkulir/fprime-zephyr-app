@@ -7,7 +7,7 @@
 #ifndef ZephyrGpioDriver_HPP
 #define ZephyrGpioDriver_HPP
 
-#include "Zephyr/Drv/ZephyrGpioDriver/ZephyrGpioDriverComponentAc.hpp"
+#include "Drv/ZephyrGpioDriver/ZephyrGpioDriverComponentAc.hpp"
 
 #include <zephyr/drivers/gpio.h>
 

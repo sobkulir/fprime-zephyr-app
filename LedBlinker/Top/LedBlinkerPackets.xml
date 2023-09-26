@@ -17,6 +17,7 @@
         <channel name="cmdSeq.CS_CancelCommands"/>
         <channel name="cmdSeq.CS_CommandsExecuted"/>
         <channel name="cmdSeq.CS_SequencesCompleted"/>
+        <channel name="commUartDriver.BufferOverruns"/>
     </packet>
 
     <packet name="CDHErrors" id="2" level="1">

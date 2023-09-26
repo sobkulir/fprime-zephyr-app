@@ -12,8 +12,8 @@
 #include <Os/Log.hpp>
 #include <Svc/FramingProtocol/FprimeProtocol.hpp>
 #include <Svc/BufferManager/BufferManager.hpp>
-#include <Zephyr/Drv/ZephyrGpioDriver/ZephyrGpioDriver.hpp>
-#include <Zephyr/Fw/ZephyrMallocAllocator/ZephyrMallocAllocator.hpp>
+#include <Drv/ZephyrGpioDriver/ZephyrGpioDriver.hpp>
+#include <Fw/ZephyrMallocAllocator/ZephyrMallocAllocator.hpp>
 
 #include <zephyr/kernel.h>
 #include <zephyr/device.h>
@@ -43,8 +43,8 @@ Fw::ZephyrMallocAllocator mallocator;
 Svc::FprimeFraming framing;
 Svc::FprimeDeframing deframing;
 
-// The reference topology divides the incoming clock signal (1Hz) into sub-signals: 1Hz, 1/2Hz, and 1/4Hz
-NATIVE_INT_TYPE rateGroupDivisors[Svc::RateGroupDriver::DIVIDER_SIZE] = {1, 100, 500};
+// The reference topology divides the incoming clock signal (1Hz) into sub-signals: 500Hz, 10Hz, and 1Hz
+NATIVE_INT_TYPE rateGroupDivisors[Svc::RateGroupDriver::DIVIDER_SIZE] = {2, 100, 1000};
 
 // Rate groups may supply a context token to each of the attached children whose purpose is set by the project. The
 // reference topology sets each token to zero as these contexts are unused in this project.
@@ -62,7 +62,7 @@ enum TopologyConstants {
     // HEALTH_WATCHDOG_CODE = 0x123,
     // COMM_PRIORITY = 100,
     UPLINK_BUFFER_MANAGER_STORE_SIZE = 1000,
-    UPLINK_BUFFER_MANAGER_QUEUE_SIZE = 5,
+    UPLINK_BUFFER_MANAGER_QUEUE_SIZE = 20,
     UPLINK_BUFFER_MANAGER_ID = 200
 };
 
@@ -162,7 +162,8 @@ void setupTopology(const TopologyState& state) {
     // Autocoded task kick-off (active components). Function provided by autocoder.
     startTasks(state);
 
-    commUartDriver.configure(uart, 115200);
+    // In production, not being able to initialize the UART should probably be a fatal error.
+    FW_ASSERT(commUartDriver.configure(uart, 115200) == 0);
     FW_ASSERT(led.configureDefaultState());
 
 }

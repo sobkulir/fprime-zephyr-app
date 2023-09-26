@@ -4,7 +4,7 @@
 // \brief  cpp file for ZephyrGpioDriver component implementation class
 // ======================================================================
 
-#include <Zephyr/Drv/ZephyrGpioDriver/ZephyrGpioDriver.hpp>
+#include <Drv/ZephyrGpioDriver/ZephyrGpioDriver.hpp>
 #include <FpConfig.hpp>
 #include <Fw/Types/Assert.hpp>
 

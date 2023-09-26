@@ -10,7 +10,7 @@
  *
  */
 
-#include <Zephyr/Fw/ZephyrMallocAllocator/ZephyrMallocAllocator.hpp>
+#include <Fw/ZephyrMallocAllocator/ZephyrMallocAllocator.hpp>
 #include <zephyr/kernel.h>
 
 namespace Fw {

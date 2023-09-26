@@ -13,12 +13,8 @@ set(SOURCE_FILES
 )
 set(MOD_DEPS
   Fw/Logger
-  Zephyr/Drv/ZephyrTime
-  Zephyr/Fw/ZephyrMallocAllocator
-  # Svc/LinuxTime
-  # Communication Implementations
-  # Drv/Udp
-  # Drv/TcpClient
+  Drv/ZephyrTime
+  Fw/ZephyrMallocAllocator
 )
 
 register_fprime_module()

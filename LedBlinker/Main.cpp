@@ -18,8 +18,6 @@
 
 #include <zephyr/drivers/gpio.h>
 
-LOG_MODULE_REGISTER(main);
-
 // MRAM and FS globals.
 #define SPI_NHOLD_NODE DT_ALIAS(spi_nhold)
 #define SPI_NWP_NODE DT_ALIAS(spi_nwp)
@@ -33,7 +31,7 @@ static struct fs_mount_t *mp = &FS_FSTAB_ENTRY(PARTITION_NODE);
 
 // Mounts LittleFS on the MRAM.
 // Returns 0 on success, negative on failure.
-int mountFilesystem(void) {
+int mountFilesystem(bool shouldWipe) {
     int ret;
 
     if (!gpio_is_ready_dt(&spi_nhold_pin)) {
@@ -54,7 +52,7 @@ int mountFilesystem(void) {
         return ret;
     }
 
-    if (IS_ENABLED(CONFIG_APP_WIPE_STORAGE)) {
+    if (shouldWipe) {
         ret = fs_mkfs(FS_LITTLEFS, (uintptr_t)FIXED_PARTITION_ID(storage_partition), mp->fs_data, 0);
         if (ret < 0) {
             return ret;
@@ -63,7 +61,7 @@ int mountFilesystem(void) {
     
     ret = fs_mount(mp);
     if (ret < 0) {
-        LOG_PRINTK("FAIL: mount id %" PRIuPTR " at %s: %d\n",
+        printk("FAIL: mount id %" PRIuPTR " at %s: %d\n",
                (uintptr_t)mp->storage_dev, mp->mnt_point, ret);
         return ret;
     }
@@ -73,7 +71,7 @@ int mountFilesystem(void) {
 
 int main()
 {
-    if (mountFilesystem() < 0) {
+    if (mountFilesystem(/*shouldWipe=*/false) < 0) {
         return 1;
     }
 
