@@ -7,7 +7,7 @@
 namespace Os {
     void IntervalTimer::getRawTime(RawTime& time) {
         int64_t uptime_ms = k_uptime_get();
-        FW_ASSERT(uptime_ms > 0, uptime_ms);
+        FW_ASSERT(uptime_ms >= 0, uptime_ms);
         time.upper = uptime_ms >> 32;
         time.lower = uptime_ms & 0xFFFFFFFF;
     }

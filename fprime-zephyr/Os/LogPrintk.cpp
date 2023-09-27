@@ -1,5 +1,5 @@
 /**
- * File: Os/LogPrintf.cpp
+ * File: Os/LogPrintk.cpp
  * Description: an implementation on the Os::Log abstraction that routes log messages into standard
  * printf calls.
  */

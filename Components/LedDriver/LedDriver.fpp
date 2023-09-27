@@ -32,8 +32,8 @@ module Components {
             format "LED failed to change state to {} from {} with error {}" \
             throttle 5
 
-        @ Default state of the LED (on/off)
-        param defaultState: bool default false
+        # @ Default state of the LED (on/off)
+        # param defaultState: bool default false
 
         ###############################################################################
         # Standard AC Ports: Required for Channels, Events, Commands, and Parameters  #
@@ -59,10 +59,10 @@ module Components {
         @ Port for sending telemetry channels to downlink
         telemetry port tlmOut
 
-        @ A port for getting parameter values
-        param get port ParamGet
+        # @ A port for getting parameter values
+        # param get port ParamGet
 
-        @Port to set the value of a parameter
-        param set port prmSetOut
+        # @Port to set the value of a parameter
+        # param set port prmSetOut
     }
 }
