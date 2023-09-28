@@ -9,11 +9,15 @@ There are two example deployments for `nucleo_h723zg` board:
 1. `LedMinimal` which requires `USART2` to be connected to communicate with "ground" (laptop)
 2. `LedBlinker` which allows file uplink/downlink and hence requires [MRAM (MR2XH40)](https://wiki.berkayisik.com/projects/software/zephyr/mram), as found on our expansion board
 
-**Two serials connected to the laptop are needed**
+**Two serials (UARTs) connected to the laptop are needed**
+
 The "main" serial, connected via the USB cable used for flashing the board, is used for debug printing.
 And while in theory I could have globbed the "space packets" over this serial, since Nucleo board has pinouts for another serial, I decided to use another one to make the design simpler. Therefore, you'll need a "serial to USB" adapter, for example Marotronics sells them for 1,29 € a piece [ [link](https://www.marotronics.de/RS232-USB-Adapter-IC-PL2303HX-33V-5V-TTL-serial-level-for-Arduino) ]. You'll also need some jump wires. If you can't source this stuff then ping me, I have some extras!
 
-TODO a picture.
+<p align="left" width="100%">
+  <img src="https://github.com/sobkulir/fprime-zephyr-app/assets/14258647/4cdbc03d-04ad-406c-810a-3dbcc3fc4314" alt="serial to usb adapter" width="300px"/>
+
+</p>
 
 Then connect the adapter as follows:
 | What | Pin Nucleo |
@@ -23,7 +27,7 @@ Then connect the adapter as follows:
 | Serial RX | CN9 6 |
 | Serial TX | CN9 4 |
 
-*Note 1: In the actual design, this communication will be over CAN. Maximum payload of CAN FD is 64B so packets will have to be fragmented and defragmented. Here, serial is used to work around this for now.*
+*Note 1: In the actual design, this communication will be over CAN. Maximum payload of CAN FD is 64B so packets will have to be fragmented and defragmented. Here, the serial is used to work around this for now.*
 
 *Note 2: There is a standard for multiplexing serials over USB called USB CDC-ACM to avoid the extra "serial to USB" hardware, but I couldn't make it work on our board. [ [USB CDC-ACM composite sample](https://docs.zephyrproject.org/latest/samples/subsys/usb/cdc_acm_composite/README.html), [Issue #57499](https://github.com/zephyrproject-rtos/zephyr/issues/57499), [Issue #59828](https://github.com/zephyrproject-rtos/zephyr/issues/59828) ]*
 
@@ -63,7 +67,7 @@ $ cd LedMinimal && fprime-util generate -DBOARD=nucleo_h723zg -DCMAKE_GENERATOR=
 $ sudo west flash --build-dir build-fprime-automatic-zephyr
 ```
 
-*Note: Ninja is used instead of Makefile (default for F Prime), because, at least on the tested system, it was significantly faster.*
+*Note: Ninja is used instead of Make (default for F Prime), because, at least on the tested system, it was significantly faster.*
 
 Running `fprime-gds` over UART (maybe you'll need to change the device name):
 ```shell
