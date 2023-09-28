@@ -41,7 +41,8 @@ RUN apt-get -y update && \
         libsdl2-dev \
         libmagic1 \
         sudo \
-        locales
+        locales \
+        tmux
 
 # Install the clang-format
 RUN apt-get update \
@@ -116,6 +117,9 @@ RUN sudo -E -- bash -c ' \
 
 # Activate Zephyr environment (needed for CMake to find the Zephyr)
 RUN echo '[ -f /zephyr-workspace/zephyr/zephyr-env.sh ] && . /zephyr-workspace/zephyr/zephyr-env.sh' >> /home/user/.bashrc
+
+# Use bash as default shell in tmux.
+RUN echo 'set-option -g default-shell /bin/bash' >> /home/user/.tmux.conf
 
 WORKDIR /zephyr-workspace/fprime-zephyr-app
 ENTRYPOINT ["/bin/bash"]

@@ -103,8 +103,9 @@ void configureTopology() {
     // health.setPingEntries(pingEntries, FW_NUM_ARRAY_ELEMENTS(pingEntries), HEALTH_WATCHDOG_CODE);
 
     // Parameter database is configured with a database file name, and that file must be initially read.
-    prmDb.configure("/seq/PrmDb.dat");
-    prmDb.readParamFile();
+    // Currently not used.
+    // prmDb.configure("/seq/PrmDb.dat");
+    // prmDb.readParamFile();
 
     // Framer and Deframer components need to be passed a protocol handler
     downlink.setup(framing);
