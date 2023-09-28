@@ -1,4 +1,4 @@
-module LedMinimal {
+module QemuMinimal {
 
   # ----------------------------------------------------------------------
   # Symbolic constants for port numbers
@@ -16,7 +16,7 @@ module LedMinimal {
       uplinkFrame
     }
 
-  topology LedMinimal {
+  topology QemuMinimal {
 
     # ----------------------------------------------------------------------
     # Instances used in the topology
@@ -24,6 +24,7 @@ module LedMinimal {
 
     instance tlmSend
     instance cmdDisp
+    # instance cmdSeq
     instance commUartDriver
     instance downlink
     instance eventLogger
@@ -36,8 +37,6 @@ module LedMinimal {
     instance textLogger
     instance uplink
     instance zephyrTime
-    instance ledGpioDriver
-    instance led
     # ----------------------------------------------------------------------
     # Pattern graph specifiers
     # ----------------------------------------------------------------------
@@ -90,6 +89,10 @@ module LedMinimal {
       rateGroup3.RateGroupMemberOut[1] -> commUartDriver.schedInTlm
     }
 
+    connections Sequencer {
+      # cmdSeq.comCmdOut -> cmdDisp.seqCmdBuff
+      # cmdDisp.seqCmdStatus -> cmdSeq.cmdResponseIn
+    }
 
     connections Uplink {
 
@@ -105,10 +108,6 @@ module LedMinimal {
       uplink.bufferDeallocate -> staticMemory.bufferDeallocate[Ports_StaticMemory.uplinkFrame]
     }
 
-    connections LedMinimal {
-      # Add here connections to user-defined components
-      led.gpioSet -> ledGpioDriver.gpioWrite
-    }
 
   }
 

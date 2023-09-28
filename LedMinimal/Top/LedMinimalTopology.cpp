@@ -11,7 +11,6 @@
 // Necessary project-specified types
 #include <Os/Log.hpp>
 #include <Svc/FramingProtocol/FprimeProtocol.hpp>
-#include <Svc/BufferManager/BufferManager.hpp>
 #include <Drv/ZephyrGpioDriver/ZephyrGpioDriver.hpp>
 
 #include <zephyr/kernel.h>
@@ -110,10 +109,10 @@ void configureTopology() {
     uplink.setup(deframing);
 
     // Buffer managers need a configured set of buckets and an allocator used to allocate memory for those buckets.
-    Svc::BufferManager::BufferBins upBuffMgrBins;
-    memset(&upBuffMgrBins, 0, sizeof(upBuffMgrBins));
-    upBuffMgrBins.bins[0].bufferSize = UPLINK_BUFFER_MANAGER_STORE_SIZE;
-    upBuffMgrBins.bins[0].numBuffers = UPLINK_BUFFER_MANAGER_QUEUE_SIZE;
+    // Svc::BufferManager::BufferBins upBuffMgrBins;
+    // memset(&upBuffMgrBins, 0, sizeof(upBuffMgrBins));
+    // upBuffMgrBins.bins[0].bufferSize = UPLINK_BUFFER_MANAGER_STORE_SIZE;
+    // upBuffMgrBins.bins[0].numBuffers = UPLINK_BUFFER_MANAGER_QUEUE_SIZE;
     // fileUplinkBufferManager.setup(UPLINK_BUFFER_MANAGER_ID, 0, mallocator, upBuffMgrBins);
     // File downlink requires some project-derived properties.
     // fileDownlink.configure(FILE_DOWNLINK_TIMEOUT, FILE_DOWNLINK_COOLDOWN, FILE_DOWNLINK_CYCLE_TIME,
@@ -144,8 +143,15 @@ void setupTopology(const TopologyState& state) {
     // Autocoded task kick-off (active components). Function provided by autocoder.
     startTasks(state);
 
-    // In production, not being able to initialize the UART should probably be a fatal error.
-    FW_ASSERT(commUartDriver.configure(uart, 115200) == 0);
+    struct uart_config uart_cfg = {
+        .baudrate = 115200,
+        .parity = UART_CFG_PARITY_NONE,
+        .stop_bits = UART_CFG_STOP_BITS_1,
+        .data_bits = UART_CFG_DATA_BITS_8,
+        .flow_ctrl = UART_CFG_FLOW_CTRL_NONE,
+    };
+    // For now we just assert, but these errors behaviours should be thought out.
+    FW_ASSERT(commUartDriver.configure(uart, &uart_cfg) == 0);
     FW_ASSERT(led.configureDefaultState());
 
 }

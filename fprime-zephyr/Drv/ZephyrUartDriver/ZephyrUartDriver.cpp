@@ -30,9 +30,8 @@ namespace Drv {
 
     }
 
-    int ZephyrUartDriver::configure(const struct device *dev, U32 baud_rate) {
+    int ZephyrUartDriver::configure(const struct device *dev, struct uart_config *uart_cfg) {
         FW_ASSERT(dev != nullptr);
-        FW_ASSERT(baud_rate <= 115200);
 
         this->m_dev = dev;
         int ret;
@@ -41,17 +40,11 @@ namespace Drv {
             return -1;
         }
 
-        struct uart_config uart_cfg = {
-            .baudrate = baud_rate,
-            .parity = UART_CFG_PARITY_NONE,
-            .stop_bits = UART_CFG_STOP_BITS_1,
-            .data_bits = UART_CFG_DATA_BITS_8,
-            .flow_ctrl = UART_CFG_FLOW_CTRL_NONE,
-        };
-        
-        ret = uart_configure(this->m_dev, &uart_cfg);
-        if (ret < 0) {
-            return ret;
+        if (uart_cfg != nullptr) {
+            ret = uart_configure(this->m_dev, uart_cfg);
+            if (ret < 0) {
+                return ret;
+            }
         }
 
         ring_buf_init(&this->m_ring_buf, SERIAL_BUFFER_SIZE, this->m_ring_buf_data);

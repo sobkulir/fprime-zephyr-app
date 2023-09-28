@@ -1,42 +1,33 @@
 // ======================================================================
-// \title  LedBlinkerTopology.cpp
+// \title  QemuMinimalTopology.cpp
 // \brief cpp file containing the topology instantiation code
 //
 // ======================================================================
 // Provides access to autocoded functions
-#include <LedBlinker/Top/LedBlinkerTopologyAc.hpp>
-#include <LedBlinker/Top/LedBlinkerPacketsAc.hpp>
+#include <QemuMinimal/Top/QemuMinimalTopologyAc.hpp>
+#include <QemuMinimal/Top/QemuMinimalPacketsAc.hpp>
 #include <config/FppConstantsAc.hpp>
 
 // Necessary project-specified types
 #include <Os/Log.hpp>
 #include <Svc/FramingProtocol/FprimeProtocol.hpp>
-#include <Svc/BufferManager/BufferManager.hpp>
-#include <Drv/ZephyrGpioDriver/ZephyrGpioDriver.hpp>
-#include <Fw/ZephyrMallocAllocator/ZephyrMallocAllocator.hpp>
 
 #include <zephyr/kernel.h>
 #include <zephyr/device.h>
 #include <zephyr/devicetree.h>
-#include <zephyr/drivers/gpio.h>
 
-#define UART_DEVICE_NODE DT_NODELABEL(usart2)
+#define UART_DEVICE_NODE DT_NODELABEL(uart1)
 const struct device *const uart = DEVICE_DT_GET(UART_DEVICE_NODE);
 
-/* The devicetree node identifier for the "led0" alias. */
-#define LED0_NODE DT_ALIAS(led0)
-static struct gpio_dt_spec led_gpio = GPIO_DT_SPEC_GET(LED0_NODE, gpios);
-
-
 // Allows easy reference to objects in FPP/autocoder required namespaces
-using namespace LedBlinker;
+using namespace QemuMinimal;
 
 // Instantiate a system logger that will handle Fw::Logger::logMsg calls
 Os::Log logger;
 
 // The reference topology uses a malloc-based allocator for components that need to allocate memory during the
 // initialization phase.
-Fw::ZephyrMallocAllocator mallocator;
+// Fw::ZephyrMallocAllocator mallocator;
 
 // The reference topology uses the F´ packet protocol when communicating with the ground and therefore uses the F´
 // framing and deframing implementations.
@@ -92,8 +83,7 @@ enum TopologyConstants {
 void configureTopology() {
     // Rate group driver needs a divisor list
     rateGroupDriver.configure(rateGroupDivisors, FW_NUM_ARRAY_ELEMENTS(rateGroupDivisors));
-    cmdSeq.allocateBuffer(0, mallocator, CMD_SEQ_BUFFER_SIZE);
-
+    // cmdSeq.allocateBuffer(0, mallocator, CMD_SEQ_BUFFER_SIZE);
     // Rate groups require context arrays.
     rateGroup1.configure(rateGroup1Context, FW_NUM_ARRAY_ELEMENTS(rateGroup1Context));
     rateGroup2.configure(rateGroup2Context, FW_NUM_ARRAY_ELEMENTS(rateGroup2Context));
@@ -103,61 +93,53 @@ void configureTopology() {
     // health.setPingEntries(pingEntries, FW_NUM_ARRAY_ELEMENTS(pingEntries), HEALTH_WATCHDOG_CODE);
 
     // Parameter database is configured with a database file name, and that file must be initially read.
-    prmDb.configure("/seq/PrmDb.dat");
-    prmDb.readParamFile();
+    // prmDb.configure("/seq/PrmDb.dat");
+    // prmDb.readParamFile();
 
     // Framer and Deframer components need to be passed a protocol handler
     downlink.setup(framing);
     uplink.setup(deframing);
 
     // Buffer managers need a configured set of buckets and an allocator used to allocate memory for those buckets.
-    Svc::BufferManager::BufferBins upBuffMgrBins;
-    memset(&upBuffMgrBins, 0, sizeof(upBuffMgrBins));
-    upBuffMgrBins.bins[0].bufferSize = UPLINK_BUFFER_MANAGER_STORE_SIZE;
-    upBuffMgrBins.bins[0].numBuffers = UPLINK_BUFFER_MANAGER_QUEUE_SIZE;
-    fileUplinkBufferManager.setup(UPLINK_BUFFER_MANAGER_ID, 0, mallocator, upBuffMgrBins);
+    // Svc::BufferManager::BufferBins upBuffMgrBins;
+    // memset(&upBuffMgrBins, 0, sizeof(upBuffMgrBins));
+    // upBuffMgrBins.bins[0].bufferSize = UPLINK_BUFFER_MANAGER_STORE_SIZE;
+    // upBuffMgrBins.bins[0].numBuffers = UPLINK_BUFFER_MANAGER_QUEUE_SIZE;
+    // fileUplinkBufferManager.setup(UPLINK_BUFFER_MANAGER_ID, 0, mallocator, upBuffMgrBins);
     // File downlink requires some project-derived properties.
-    fileDownlink.configure(FILE_DOWNLINK_TIMEOUT, FILE_DOWNLINK_COOLDOWN, FILE_DOWNLINK_CYCLE_TIME,
-                           FILE_DOWNLINK_FILE_QUEUE_DEPTH);
+    // fileDownlink.configure(FILE_DOWNLINK_TIMEOUT, FILE_DOWNLINK_COOLDOWN, FILE_DOWNLINK_CYCLE_TIME,
+    //                        FILE_DOWNLINK_FILE_QUEUE_DEPTH);
 
-    bool led_gpio_opened = ledGpioDriver.open(&led_gpio, Drv::ZephyrGpioDriver::GpioDirection::OUT);
-    FW_ASSERT(led_gpio_opened);
 
     // Note: Uncomment when using Svc:TlmPacketizer
-    // tlmSend.setPacketList(LedBlinkerPacketsPkts, LedBlinkerPacketsIgnore, 1);
+    // tlmSend.setPacketList(QemuMinimalPacketsPkts, QemuMinimalPacketsIgnore, 1);
 }
 
-// Public functions for use in main program are namespaced with deployment name LedBlinker
-namespace LedBlinker {
+// Public functions for use in main program are namespaced with deployment name QemuMinimal
+namespace QemuMinimal {
 void setupTopology(const TopologyState& state) {
-
     // Autocoded initialization. Function provided by autocoder.
     initComponents(state);
+
     // Autocoded id setup. Function provided by autocoder.
     setBaseIds();
+
     // Autocoded connection wiring. Function provided by autocoder.
     connectComponents();
+
     // Autocoded command registration. Function provided by autocoder.
     regCommands();
+
     // Project-specific component configuration. Function provided above. May be inlined, if desired.
     configureTopology();
+
     // Autocoded parameter loading. Function provided by autocoder.
     loadParameters();
     // Autocoded task kick-off (active components). Function provided by autocoder.
     startTasks(state);
 
-    struct uart_config uart_cfg = {
-        .baudrate = 115200,
-        .parity = UART_CFG_PARITY_NONE,
-        .stop_bits = UART_CFG_STOP_BITS_1,
-        .data_bits = UART_CFG_DATA_BITS_8,
-        .flow_ctrl = UART_CFG_FLOW_CTRL_NONE,
-    };
-
     // In production, not being able to initialize the UART should probably be a fatal error.
-    FW_ASSERT(commUartDriver.configure(uart, &uart_cfg) == 0);
-    FW_ASSERT(led.configureDefaultState());
-
+    FW_ASSERT(commUartDriver.configure(uart, /*uart_cfg=*/nullptr) == 0);
 }
 
-};  // namespace LedBlinker
+};  // namespace QemuMinimal

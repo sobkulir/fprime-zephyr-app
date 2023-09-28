@@ -43,9 +43,10 @@ namespace Drv {
         //!
         ~ZephyrUartDriver();
 
-        //! Configures the UART device. The `baud_rate` is assumed to be at most 115200.
+        //! Configures the UART device. The argument `uart_cfg` is optional so that underlying drivers
+        //! which can't be configured at runtime are still supported.
         //! \return 0 on success, negative on failure
-        int configure(const struct device *dev, U32 baud_rate);
+        int configure(const struct device *dev, struct uart_config *uart_cfg);
 
     PRIVATE:
 
