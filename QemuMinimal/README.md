@@ -3,9 +3,13 @@
 This is a minimal example that can be fully emulated. The target device is TI LM3S6965 which only has 64KiB RAM so I overrode the FpConfig with smaller buffers/array size etc to make it compile and run the basic example, but take that config with a grain of salt please.
 
 ## Building and running
+
+Building is business as usual, running is a bit more involved.
+
+### Building
 ```shell
 $ fprime-util generate -DBOARD=qemu_cortex_m3 -DCMAKE_GENERATOR=Ninja
-$ fprime-util build -j16 
+$ fprime-util build -j16
 ```
 
 ### Running
@@ -31,4 +35,4 @@ Now to run the GDS, switch the terminal to a new one (`Ctrl+B ;`) and run the fo
 sudo fprime-gds --uart-device /dev/pts/X --uart-baud 115200 --dictionary build-artifacts/zephyr/QemuMinimal/dict/QemuMinimalTopologyAppDictionary.xml -n --comm-adapter uart
 ```
 
-Now, open `localhost:5000` in your browser and you should be able to send no-op commands (yay), see that the connection is alive.
+Now, open `localhost:5000` in your browser and you should be able to send no-op commands (yay), see that the connection is alive in the upper right corner of the GDS..

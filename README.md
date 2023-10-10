@@ -45,7 +45,7 @@ the ``fprime-zephyr-app`` and all Zephyr modules will be cloned. Run the followi
 ```shell
 # Setup and clone
 $ mkdir zephyr-workspace && cd zephyr-workspace
-$ git clone git@github.com:sobkulir/fprime-zephyr-app.git
+$ git clone --recurse-submodules git@github.com:sobkulir/fprime-zephyr-app.git
 
 # Run a Docker image from the convenience script. It has reasonable defaults.
 $ cd fprime-zephyr-app
@@ -54,12 +54,15 @@ $ ./run_dev.py
 
 Inside the docker container:
 ```shell
+$ cd /zephyr-workspace/fprime-zephyr-app
 $ west init -l .
 $ west update
+# On subsequent container runs, `/home/user/.bashrc` sources this file. 
+$ source /zephyr-workspace/zephyr/zephyr-env.sh
 ```
 
 ## Building and flashing
-If you don't have a `nucleo_h723zg` board, you can run the Qemu example, for that see README in the `QemuMinimal`.
+If you don't have a `nucleo_h723zg` board, yofu can run the Qemu example, for that see README in the `QemuMinimal`.
 
 Otherwise, both `LedMinimal` and `LedBlinker` can be build and flashed as follows (example for `LedMinimal`):
 ```shell
