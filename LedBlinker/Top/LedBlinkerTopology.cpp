@@ -19,14 +19,17 @@
 #include <zephyr/device.h>
 #include <zephyr/devicetree.h>
 #include <zephyr/drivers/gpio.h>
+#include <zephyr/usb/usb_device.h>
+
 
 #define UART_DEVICE_NODE DT_NODELABEL(usart2)
-const struct device *const uart = DEVICE_DT_GET(UART_DEVICE_NODE);
+const struct device *uart = DEVICE_DT_GET(UART_DEVICE_NODE);
 
 /* The devicetree node identifier for the "led0" alias. */
 #define LED0_NODE DT_ALIAS(led0)
 static struct gpio_dt_spec led_gpio = GPIO_DT_SPEC_GET(LED0_NODE, gpios);
 
+const struct device *uart_cdc_acm = DEVICE_DT_GET_ONE(zephyr_cdc_acm_uart);
 
 // Allows easy reference to objects in FPP/autocoder required namespaces
 using namespace LedBlinker;
@@ -147,16 +150,69 @@ void setupTopology(const TopologyState& state) {
     // Autocoded task kick-off (active components). Function provided by autocoder.
     startTasks(state);
 
-    struct uart_config uart_cfg = {
-        .baudrate = 115200,
-        .parity = UART_CFG_PARITY_NONE,
-        .stop_bits = UART_CFG_STOP_BITS_1,
-        .data_bits = UART_CFG_DATA_BITS_8,
-        .flow_ctrl = UART_CFG_FLOW_CTRL_NONE,
-    };
+
+    // struct uart_config uart_cfg = {
+    //     .baudrate = 115200,
+    //     .parity = UART_CFG_PARITY_NONE,
+    //     .stop_bits = UART_CFG_STOP_BITS_1,
+    //     .data_bits = UART_CFG_DATA_BITS_8,
+    //     .flow_ctrl = UART_CFG_FLOW_CTRL_NONE,
+    // };
+
+    // Copy-paste from `zephyr/samples/subsys/usb/cdc_acm/src/main.c`.
+	uint32_t baudrate, dtr = 0U;
+	int ret;
+
+	if (!device_is_ready(uart_cdc_acm)) {
+        printk("CDC ACM device not ready\n");
+		return;
+	}
+    ret = usb_enable(NULL);
+
+	if (ret != 0) {
+		printk("Failed to enable USB\n");
+		return;
+	}
+    printk("Wait for DTR\n");
+
+	while (true) {
+		uart_line_ctrl_get(uart_cdc_acm, UART_LINE_CTRL_DTR, &dtr);
+		if (dtr) {
+			break;
+		} else {
+			/* Give CPU resources to low priority threads. */
+			k_sleep(K_MSEC(100));
+		}
+	}
+
+	printk("DTR set\n");
+
+	/* They are optional, we use them to test the interrupt endpoint */
+	ret = uart_line_ctrl_set(uart_cdc_acm, UART_LINE_CTRL_DCD, 1);
+	if (ret) {
+		printk("Failed to set DCD, ret code %d\n", ret);
+        return;
+	}
+
+	ret = uart_line_ctrl_set(uart_cdc_acm, UART_LINE_CTRL_DSR, 1);
+	if (ret) {
+		printk("Failed to set DSR, ret code %d\n", ret);
+        return;
+	}
+
+	/* Wait 100ms for the host to do all settings */
+	k_msleep(100);
+
+	ret = uart_line_ctrl_get(uart_cdc_acm, UART_LINE_CTRL_BAUD_RATE, &baudrate);
+	if (ret) {
+		printk("Failed to get baudrate, ret code %d\n", ret);
+        return;
+	} else {
+		printk("Baudrate detected: %d\n", baudrate);
+	}
 
     // In production, not being able to initialize the UART should probably be a fatal error.
-    FW_ASSERT(commUartDriver.configure(uart, &uart_cfg) == 0);
+    FW_ASSERT(commUartDriver.configure(uart_cdc_acm, nullptr) == 0);
     FW_ASSERT(led.configureDefaultState());
 
 }

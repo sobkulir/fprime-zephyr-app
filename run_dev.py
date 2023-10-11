@@ -39,7 +39,7 @@ def get_device_fallthrough(is_force_devices):
     else:
         # The device group 180 is for "USB block devices". If you run into troubles, try multiple groups:
         #   https://www.kernel.org/doc/Documentation/admin-guide/devices.txt
-        return ['-v', '/dev/bus/usb:/dev/bus/usb', "--device-cgroup-rule=a 180:* rmw", '-v', '/dev/ttyUSB0:/dev/ttyUSB0']
+        return ['-v', '/dev/bus/usb:/dev/bus/usb', "--device-cgroup-rule=a 180:* rmw", '-v', '/dev/ttyACM1:/dev/ttyACM1', '-v', '/dev/ttyUSB0:/dev/ttyUSB0']
 
 
 def get_abs_path(path):
