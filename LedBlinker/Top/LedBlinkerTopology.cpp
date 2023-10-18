@@ -52,7 +52,7 @@ NATIVE_INT_TYPE rateGroup1Context[FppConstant_PassiveRateGroupOutputPorts::Passi
 NATIVE_INT_TYPE rateGroup2Context[FppConstant_PassiveRateGroupOutputPorts::PassiveRateGroupOutputPorts] = {};
 NATIVE_INT_TYPE rateGroup3Context[FppConstant_PassiveRateGroupOutputPorts::PassiveRateGroupOutputPorts] = {};
 
-// // A number of constants are needed for construction of the topology. These are specified here.
+// A number of constants are needed for construction of the topology. These are specified here.
 enum TopologyConstants {
     CMD_SEQ_BUFFER_SIZE = 3 * 1024,
     FILE_DOWNLINK_TIMEOUT = 1000,
@@ -65,22 +65,6 @@ enum TopologyConstants {
     UPLINK_BUFFER_MANAGER_QUEUE_SIZE = 20,
     UPLINK_BUFFER_MANAGER_ID = 200
 };
-
-// // Ping entries are autocoded, however; this code is not properly exported. Thus, it is copied here.
-// Svc::Health::PingEntry pingEntries[] = {
-//     {PingEntries::blockDrv::WARN, PingEntries::blockDrv::FATAL, "blockDrv"},
-//     {PingEntries::tlmSend::WARN, PingEntries::tlmSend::FATAL, "chanTlm"},
-//     {PingEntries::cmdDisp::WARN, PingEntries::cmdDisp::FATAL, "cmdDisp"},
-//     {PingEntries::cmdSeq::WARN, PingEntries::cmdSeq::FATAL, "cmdSeq"},
-//     {PingEntries::eventLogger::WARN, PingEntries::eventLogger::FATAL, "eventLogger"},
-//     {PingEntries::fileDownlink::WARN, PingEntries::fileDownlink::FATAL, "fileDownlink"},
-//     {PingEntries::fileManager::WARN, PingEntries::fileManager::FATAL, "fileManager"},
-//     {PingEntries::fileUplink::WARN, PingEntries::fileUplink::FATAL, "fileUplink"},
-//     {PingEntries::prmDb::WARN, PingEntries::prmDb::FATAL, "prmDb"},
-//     {PingEntries::rateGroup1::WARN, PingEntries::rateGroup1::FATAL, "rateGroup1"},
-//     {PingEntries::rateGroup2::WARN, PingEntries::rateGroup2::FATAL, "rateGroup2"},
-//     {PingEntries::rateGroup3::WARN, PingEntries::rateGroup3::FATAL, "rateGroup3"},
-// };
 
 /**
  * \brief configure/setup components in project-specific way
@@ -99,7 +83,7 @@ void configureTopology() {
     rateGroup2.configure(rateGroup2Context, FW_NUM_ARRAY_ELEMENTS(rateGroup2Context));
     rateGroup3.configure(rateGroup3Context, FW_NUM_ARRAY_ELEMENTS(rateGroup3Context));
 
-    // Health is supplied a set of ping entires.
+    // Health is supplied a set of ping entires. Not used as of now
     // health.setPingEntries(pingEntries, FW_NUM_ARRAY_ELEMENTS(pingEntries), HEALTH_WATCHDOG_CODE);
 
     // Parameter database is configured with a database file name, and that file must be initially read.
@@ -124,8 +108,6 @@ void configureTopology() {
     bool led_gpio_opened = ledGpioDriver.open(&led_gpio, Drv::ZephyrGpioDriver::GpioDirection::OUT);
     FW_ASSERT(led_gpio_opened);
 
-    // Note: Uncomment when using Svc:TlmPacketizer
-    // tlmSend.setPacketList(LedBlinkerPacketsPkts, LedBlinkerPacketsIgnore, 1);
 }
 
 // Public functions for use in main program are namespaced with deployment name LedBlinker
