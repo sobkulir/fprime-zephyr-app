@@ -61,8 +61,11 @@ enum TopologyConstants {
     FILE_DOWNLINK_FILE_QUEUE_DEPTH = 10,
     // HEALTH_WATCHDOG_CODE = 0x123,
     // COMM_PRIORITY = 100,
-    UPLINK_BUFFER_MANAGER_STORE_SIZE = 1000,
-    UPLINK_BUFFER_MANAGER_QUEUE_SIZE = 20,
+    // (Roman) Should be set carefully, right now I believe it needs to be bigger than max upcoming file
+    // chunk size + some overhead. See relevant fprime-gds constant, it's set to 256 for chunk size:
+    // https://github.com/fprime-community/fprime-gds/blob/eada0c2ed8554d66d34d3ade1420cc351d00f74a/src/fprime_gds/common/files/uplinker.py#L148
+    UPLINK_BUFFER_MANAGER_STORE_SIZE = 512,
+    UPLINK_BUFFER_MANAGER_QUEUE_SIZE = 15,
     UPLINK_BUFFER_MANAGER_ID = 200
 };
 

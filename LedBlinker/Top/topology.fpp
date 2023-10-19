@@ -13,7 +13,6 @@ module LedBlinker {
     enum Ports_StaticMemory {
       downlink
       uplink
-      uplinkFrame
     }
 
   topology LedBlinker {

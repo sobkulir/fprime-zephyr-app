@@ -9,7 +9,8 @@
 
 namespace Svc {
     enum StaticMemoryConfig {
-        STATIC_MEMORY_ALLOCATION_SIZE = 2048
+        // Default is 2048B, LedBlinker only uses static buffers for buffers
+        STATIC_MEMORY_ALLOCATION_SIZE = 1024
     };
 }
 
