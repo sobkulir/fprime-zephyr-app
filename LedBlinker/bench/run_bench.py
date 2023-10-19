@@ -71,11 +71,13 @@ TEMPLATES = {
 }
 
 # Define the replacement values
-BASELINE = {
+BASE = {
+    'tag': 'base',
+
     AC_CONSTANTS_FPP: {
-        'PassiveRateGroupOutputPorts': '199',
-        'CmdDispatcherComponentCommandPorts': '10',
-        'StaticMemoryAllocations': '8',
+        'PassiveRateGroupOutputPorts': '10',
+        'CmdDispatcherComponentCommandPorts': '30',
+        'StaticMemoryAllocations': '4',
     },
     FP_CONFIG_H: {
         'FW_OBJECT_NAMES': '1',
@@ -107,6 +109,303 @@ BASELINE = {
     FPRIME_SVC_CMAKELISTS_TXT: None,
 }
 
+BASE_OBJ = {
+    **BASE,
+    **{
+        'tag': 'base,obj',
+
+        FP_CONFIG_H: {
+            'FW_OBJECT_NAMES': '0',
+            'FW_OBJECT_REGISTRATION': '1',
+            'FW_PORT_TRACING': '1',
+            'FW_ENABLE_TEXT_LOGGING': '1',
+            'FW_PORT_SERIALIZATION': '1',
+            'FW_ASSERT_LEVEL': 'FW_FILENAME_ASSERT',
+        },
+    }
+}
+
+BASE_OBJ_REG = {
+    **BASE,
+    **{
+        'tag': 'base,obj,reg',
+
+        FP_CONFIG_H: {
+            'FW_OBJECT_NAMES': '0',
+            'FW_OBJECT_REGISTRATION': '0',
+            'FW_PORT_TRACING': '1',
+            'FW_ENABLE_TEXT_LOGGING': '1',
+            'FW_PORT_SERIALIZATION': '1',
+            'FW_ASSERT_LEVEL': 'FW_FILENAME_ASSERT',
+        },
+    }
+}
+
+BASE_OBJ_REG_TRC = {
+    **BASE,
+    **{
+        'tag': 'base,obj,reg,trc',
+
+        FP_CONFIG_H: {
+            'FW_OBJECT_NAMES': '0',
+            'FW_OBJECT_REGISTRATION': '0',
+            'FW_PORT_TRACING': '0',
+            'FW_ENABLE_TEXT_LOGGING': '1',
+            'FW_PORT_SERIALIZATION': '1',
+            'FW_ASSERT_LEVEL': 'FW_FILENAME_ASSERT',
+        },
+    }
+}
+
+BASE_OBJ_REG_TRC_SER = {
+    **BASE,
+    **{
+        'tag': 'base,obj,reg,trc,ser',
+
+        FP_CONFIG_H: {
+            'FW_OBJECT_NAMES': '0',
+            'FW_OBJECT_REGISTRATION': '0',
+            'FW_PORT_TRACING': '0',
+            'FW_ENABLE_TEXT_LOGGING': '1',
+            'FW_PORT_SERIALIZATION': '0',
+            'FW_ASSERT_LEVEL': 'FW_FILENAME_ASSERT',
+        },
+    }
+}
+
+BASE_OBJ_REG_TRC_SER_RTGR = {
+    **BASE,
+    **{
+        'tag': 'base,obj,reg,trc,ser,rtgr',
+        AC_CONSTANTS_FPP: {
+            'PassiveRateGroupOutputPorts': '4',
+            'CmdDispatcherComponentCommandPorts': '30',
+            'StaticMemoryAllocations': '4',
+        },
+
+        FP_CONFIG_H: {
+            'FW_OBJECT_NAMES': '0',
+            'FW_OBJECT_REGISTRATION': '0',
+            'FW_PORT_TRACING': '0',
+            'FW_ENABLE_TEXT_LOGGING': '1',
+            'FW_PORT_SERIALIZATION': '0',
+            'FW_ASSERT_LEVEL': 'FW_FILENAME_ASSERT',
+        },
+    }
+}
+
+BASE_OBJ_REG_TRC_SER_RTGR_CMD = {
+    **BASE,
+    **{
+        'tag': 'base,obj,reg,trc,ser,rtgr,cmd',
+        AC_CONSTANTS_FPP: {
+            'PassiveRateGroupOutputPorts': '4',
+            'CmdDispatcherComponentCommandPorts': '10',
+            'StaticMemoryAllocations': '4',
+        },
+
+        FP_CONFIG_H: {
+            'FW_OBJECT_NAMES': '0',
+            'FW_OBJECT_REGISTRATION': '0',
+            'FW_PORT_TRACING': '0',
+            'FW_ENABLE_TEXT_LOGGING': '1',
+            'FW_PORT_SERIALIZATION': '0',
+            'FW_ASSERT_LEVEL': 'FW_FILENAME_ASSERT',
+        },
+    }
+}
+
+BASE_OBJ_REG_TRC_SER_RTGR_CMD_BUF = {
+    **BASE,
+    **{
+        'tag': 'base,obj,reg,trc,ser,rtgr,cmd,buf',
+        AC_CONSTANTS_FPP: {
+            'PassiveRateGroupOutputPorts': '4',
+            'CmdDispatcherComponentCommandPorts': '10',
+            'StaticMemoryAllocations': '2',
+        },
+
+        FP_CONFIG_H: {
+            'FW_OBJECT_NAMES': '0',
+            'FW_OBJECT_REGISTRATION': '0',
+            'FW_PORT_TRACING': '0',
+            'FW_ENABLE_TEXT_LOGGING': '1',
+            'FW_PORT_SERIALIZATION': '0',
+            'FW_ASSERT_LEVEL': 'FW_FILENAME_ASSERT',
+        },
+        STATIC_MEMORY_CONFIG_HPP: {
+            'STATIC_MEMORY_ALLOCATION_SIZE': 1024,
+        },
+    }
+}
+print(BASE_OBJ_REG_TRC_SER_RTGR_CMD_BUF)
+
+BASE_OBJ_REG_TRC_SER_RTGR_CMD_BUF_TLM = {
+    **BASE,
+    **{
+        'tag': 'base,obj,reg,trc,ser,rtgr,cmd,buf,tlm',
+        AC_CONSTANTS_FPP: {
+            'PassiveRateGroupOutputPorts': '4',
+            'CmdDispatcherComponentCommandPorts': '10',
+            'StaticMemoryAllocations': '2',
+        },
+
+        FP_CONFIG_H: {
+            'FW_OBJECT_NAMES': '0',
+            'FW_OBJECT_REGISTRATION': '0',
+            'FW_PORT_TRACING': '0',
+            'FW_ENABLE_TEXT_LOGGING': '1',
+            'FW_PORT_SERIALIZATION': '0',
+            'FW_ASSERT_LEVEL': 'FW_FILENAME_ASSERT',
+        },
+        STATIC_MEMORY_CONFIG_HPP: {
+            'STATIC_MEMORY_ALLOCATION_SIZE': 1024,
+        },
+        TLM_CHAN_IMPL_CFG_HPP: {
+            'TLMCHAN_HASH_BUCKETS': 35,
+        },
+    }
+}
+
+BASE_OBJ_REG_TRC_SER_RTGR_CMD_BUF_TLM_HEAP = {
+    **BASE,
+    **{
+        'tag': 'base,obj,reg,trc,ser,rtgr,cmd,buf,tlm,heap',
+        AC_CONSTANTS_FPP: {
+            'PassiveRateGroupOutputPorts': '4',
+            'CmdDispatcherComponentCommandPorts': '10',
+            'StaticMemoryAllocations': '2',
+        },
+
+        FP_CONFIG_H: {
+            'FW_OBJECT_NAMES': '0',
+            'FW_OBJECT_REGISTRATION': '0',
+            'FW_PORT_TRACING': '0',
+            'FW_ENABLE_TEXT_LOGGING': '1',
+            'FW_PORT_SERIALIZATION': '0',
+            'FW_ASSERT_LEVEL': 'FW_FILENAME_ASSERT',
+        },
+        STATIC_MEMORY_CONFIG_HPP: {
+            'STATIC_MEMORY_ALLOCATION_SIZE': 1024,
+        },
+        TLM_CHAN_IMPL_CFG_HPP: {
+            'TLMCHAN_HASH_BUCKETS': 35,
+        },
+        PRJ_CONF: {
+            'CONFIG_HEAP_MEM_POOL_SIZE': 35000,
+        },
+    }
+}
+
+BASE_OBJ_REG_TRC_SER_RTGR_CMD_BUF_TLM_HEAP_CRC = {
+    **BASE,
+    **{
+        'tag': 'base,obj,reg,trc,ser,rtgr,cmd,buf,tlm,heap,crc',
+        AC_CONSTANTS_FPP: {
+            'PassiveRateGroupOutputPorts': '4',
+            'CmdDispatcherComponentCommandPorts': '10',
+            'StaticMemoryAllocations': '2',
+        },
+
+        FP_CONFIG_H: {
+            'FW_OBJECT_NAMES': '0',
+            'FW_OBJECT_REGISTRATION': '0',
+            'FW_PORT_TRACING': '0',
+            'FW_ENABLE_TEXT_LOGGING': '1',
+            'FW_PORT_SERIALIZATION': '0',
+            'FW_ASSERT_LEVEL': 'FW_FILEID_ASSERT',
+        },
+        STATIC_MEMORY_CONFIG_HPP: {
+            'STATIC_MEMORY_ALLOCATION_SIZE': 1024,
+        },
+        TLM_CHAN_IMPL_CFG_HPP: {
+            'TLMCHAN_HASH_BUCKETS': 35,
+        },
+        PRJ_CONF: {
+            'CONFIG_HEAP_MEM_POOL_SIZE': 35000,
+        },
+    }
+}
+
+BASE_OBJ_REG_TRC_SER_RTGR_CMD_BUF_TLM_HEAP_CRC_LOG = {
+    **BASE,
+    **{
+        'tag': 'base,obj,reg,trc,ser,rtgr,cmd,buf,tlm,heap,crc,log',
+        AC_CONSTANTS_FPP: {
+            'PassiveRateGroupOutputPorts': '4',
+            'CmdDispatcherComponentCommandPorts': '10',
+            'StaticMemoryAllocations': '2',
+        },
+
+        FP_CONFIG_H: {
+            'FW_OBJECT_NAMES': '0',
+            'FW_OBJECT_REGISTRATION': '0',
+            'FW_PORT_TRACING': '0',
+            'FW_ENABLE_TEXT_LOGGING': '0',
+            'FW_PORT_SERIALIZATION': '0',
+            'FW_ASSERT_LEVEL': 'FW_FILEID_ASSERT',
+        },
+        STATIC_MEMORY_CONFIG_HPP: {
+            'STATIC_MEMORY_ALLOCATION_SIZE': 1024,
+        },
+        TLM_CHAN_IMPL_CFG_HPP: {
+            'TLMCHAN_HASH_BUCKETS': 35,
+        },
+        PRJ_CONF: {
+            'CONFIG_HEAP_MEM_POOL_SIZE': 35000,
+        },
+        INSTANCES_FPP: {
+            'COMMENT_OUT_TEXT_LOGGER': '#',
+        },
+        TOPOLOGY_FPP: {
+            'COMMENT_OUT_TEXT_LOGGER': '#',
+        },
+        SETTINGS_INI: {
+            'FPRIME_ENABLE_TEXT_LOGGERS': 'OFF',
+        },
+    }
+}
+
+BASE_OBJ_REG_TRC_SER_RTGR_CMD_BUF_TLM_HEAP_CRC_LOG_ASRT = {
+    **BASE,
+    **{
+        'tag': 'base,obj,reg,trc,ser,rtgr,cmd,buf,tlm,heap,crc,log,asrt',
+        AC_CONSTANTS_FPP: {
+            'PassiveRateGroupOutputPorts': '4',
+            'CmdDispatcherComponentCommandPorts': '10',
+            'StaticMemoryAllocations': '2',
+        },
+
+        FP_CONFIG_H: {
+            'FW_OBJECT_NAMES': '0',
+            'FW_OBJECT_REGISTRATION': '0',
+            'FW_PORT_TRACING': '0',
+            'FW_ENABLE_TEXT_LOGGING': '0',
+            'FW_PORT_SERIALIZATION': '0',
+            'FW_ASSERT_LEVEL': 'FW_NO_ASSERT',
+        },
+        STATIC_MEMORY_CONFIG_HPP: {
+            'STATIC_MEMORY_ALLOCATION_SIZE': 1024,
+        },
+        TLM_CHAN_IMPL_CFG_HPP: {
+            'TLMCHAN_HASH_BUCKETS': 35,
+        },
+        PRJ_CONF: {
+            'CONFIG_HEAP_MEM_POOL_SIZE': 35000,
+        },
+        INSTANCES_FPP: {
+            'COMMENT_OUT_TEXT_LOGGER': '#',
+        },
+        TOPOLOGY_FPP: {
+            'COMMENT_OUT_TEXT_LOGGER': '#',
+        },
+        SETTINGS_INI: {
+            'FPRIME_ENABLE_TEXT_LOGGERS': 'OFF',
+        },
+    }
+}
+
+
 def backup_files(paths, backup_dir):
     """
     Back up the specified files to the backup directory.
@@ -136,7 +435,7 @@ def restore_backups(paths, backup_dir):
         shutil.copy2(os.path.join(backup_dir, file_name), path)
 
 def generate(replacements):
-    for fname in replacements:
+    for fname in TEMPLATES.keys():
         # Read the template file
         with open(TEMPLATES[fname][TMPL], 'r') as file:
             template_content = file.read()
@@ -160,13 +459,13 @@ def build_project(stats_output_dir):
     if not os.path.exists(stats_output_dir):
         os.makedirs(stats_output_dir)
 
-    command = (f'rm -rf {LED_BLINKER_PATH}/build-* && '
-               f'fprime-util generate -r {LED_BLINKER_PATH} -DBOARD=nucleo_h723zg -DCMAKE_GENERATOR=Ninja &&'
-               f'west build --build-dir {LED_BLINKER_PATH}/build-fprime-automatic-zephyr/ -t zephyr.elf &&'
-               f'rm {LED_BLINKER_PATH}/build-fprime-automatic-zephyr/zephyr/zephyr.elf &&'
-               f'ninja -C {LED_BLINKER_PATH}/build-fprime-automatic-zephyr zephyr.elf > {stats_output_dir}/compact.txt &&'
-               f'echo rom_report && west build --build-dir {LED_BLINKER_PATH}/build-fprime-automatic-zephyr/ -t rom_report > {stats_output_dir}/rom_usage.txt &&'
-               f'echo ram_report && west build --build-dir {LED_BLINKER_PATH}/build-fprime-automatic-zephyr/ -t ram_report > {stats_output_dir}/ram_usage.txt'
+    command = (f'rm -rf {LED_BLINKER_PATH}/build-*'
+               f' && fprime-util generate -r {LED_BLINKER_PATH} -DBOARD=nucleo_h723zg -DCMAKE_GENERATOR=Ninja'
+               f' && west build --build-dir {LED_BLINKER_PATH}/build-fprime-automatic-zephyr/ -t zephyr.elf'
+               f' && rm {LED_BLINKER_PATH}/build-fprime-automatic-zephyr/zephyr/zephyr.elf'
+               f' && ninja -C {LED_BLINKER_PATH}/build-fprime-automatic-zephyr zephyr.elf > {stats_output_dir}/compact.txt'
+            #    f' && echo rom_report && west build --build-dir {LED_BLINKER_PATH}/build-fprime-automatic-zephyr/ -t rom_report > {stats_output_dir}/rom_usage.txt'
+            #    f' && echo ram_report && west build --build-dir {LED_BLINKER_PATH}/build-fprime-automatic-zephyr/ -t ram_report > {stats_output_dir}/ram_usage.txt'
     )
 
     try:
@@ -181,11 +480,24 @@ def build_project(stats_output_dir):
 
 
 # RUN ALL BENCHMARKS
-all_targets = [TEMPLATES[fname][TARGET] for fname in TEMPLATES]
+templated_targets = [TEMPLATES[fname][TARGET] for fname in TEMPLATES]
+benchmarks = [
+    BASE,
+    BASE_OBJ,
+    BASE_OBJ_REG,
+    BASE_OBJ_REG_TRC,
+    BASE_OBJ_REG_TRC_SER,
+    BASE_OBJ_REG_TRC_SER_RTGR,
+    BASE_OBJ_REG_TRC_SER_RTGR_CMD,
+    BASE_OBJ_REG_TRC_SER_RTGR_CMD_BUF,
+    BASE_OBJ_REG_TRC_SER_RTGR_CMD_BUF_TLM]
 
-backup_files(all_targets, BACKUP_PATH)
+backup_files(templated_targets, BACKUP_PATH)
+
 try:
-    generate(BASELINE)
-    build_project(os.path.join(REPORT_PATH, 'baseline'))
+    for bench in benchmarks:
+        print('Generating benchmark: ' + bench['tag'])
+        generate(bench)
+        build_project(os.path.join(REPORT_PATH, bench['tag']))
 finally:
-    restore_backups(all_targets, BACKUP_PATH)
+    restore_backups(templated_targets, BACKUP_PATH)
