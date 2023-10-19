@@ -6,17 +6,24 @@ import shutil
 TMPL = 'tmpl'
 TARGET = 'target'
 
+F_PRIME_PATH = '/zephyr-workspace/fprime-zephyr-app/fprime'
 LED_BLINKER_PATH = '/zephyr-workspace/fprime-zephyr-app/LedBlinker'
 BENCH_PATH = os.path.join(LED_BLINKER_PATH, 'bench')
 BACKUP_PATH = os.path.join(BENCH_PATH, 'backups')
 REPORT_PATH = os.path.join(BENCH_PATH, 'report')
 TMPL_PATH = os.path.join(BENCH_PATH, 'tmpl')
 
+# All files to template
 AC_CONSTANTS_FPP = 'AcConstants.fpp'
 FP_CONFIG_H = 'FpConfig.h'
 STATIC_MEMORY_CONFIG_HPP = 'StaticMemoryConfig.hpp'
 TLM_CHAN_IMPL_CFG_HPP = 'TlmChanImplCfg.hpp'
 PRJ_CONF = 'prj.conf'
+SETTINGS_INI = 'settings.ini'
+INSTANCES_FPP = 'instances.fpp'
+TOPOLOGY_FPP = 'topology.fpp'
+LOG_ASSERT_HPP = 'LogAssert.hpp'
+FPRIME_SVC_CMAKELISTS_TXT = 'FprimeSvcCMakeLists.txt'
 
 TEMPLATES = {
     AC_CONSTANTS_FPP: {
@@ -38,6 +45,28 @@ TEMPLATES = {
     PRJ_CONF: {
         TMPL: os.path.join(TMPL_PATH, PRJ_CONF + '.tmpl'),
         TARGET: os.path.join(LED_BLINKER_PATH, PRJ_CONF),
+    },
+    SETTINGS_INI: {
+        TMPL: os.path.join(TMPL_PATH, SETTINGS_INI + '.tmpl'),
+        TARGET: os.path.join(LED_BLINKER_PATH, SETTINGS_INI),
+    },
+    INSTANCES_FPP: {
+        TMPL: os.path.join(TMPL_PATH, INSTANCES_FPP + '.tmpl'),
+        TARGET: os.path.join(LED_BLINKER_PATH, 'Top', INSTANCES_FPP),
+    },
+    TOPOLOGY_FPP: {
+        TMPL: os.path.join(TMPL_PATH, TOPOLOGY_FPP + '.tmpl'),
+        TARGET: os.path.join(LED_BLINKER_PATH, 'Top', TOPOLOGY_FPP),
+    },
+
+    # F Prime patches to compile without assertions and without event logging.
+    LOG_ASSERT_HPP: {
+        TMPL: os.path.join(TMPL_PATH, LOG_ASSERT_HPP + '.tmpl'),
+        TARGET: os.path.join(F_PRIME_PATH, 'Fw', 'Logger', LOG_ASSERT_HPP),
+    },
+    FPRIME_SVC_CMAKELISTS_TXT: {
+        TMPL: os.path.join(TMPL_PATH, FPRIME_SVC_CMAKELISTS_TXT + '.tmpl'),
+        TARGET: os.path.join(F_PRIME_PATH, 'Svc', 'CMakeLists.txt'),
     },
 }
 
@@ -64,7 +93,18 @@ BASELINE = {
     },
     PRJ_CONF: {
         'CONFIG_HEAP_MEM_POOL_SIZE': 60000,
-    }
+    },
+    INSTANCES_FPP: {
+        'COMMENT_OUT_TEXT_LOGGER': '',
+    },
+    TOPOLOGY_FPP: {
+        'COMMENT_OUT_TEXT_LOGGER': '',
+    },
+    SETTINGS_INI: {
+        'FPRIME_ENABLE_TEXT_LOGGERS': 'ON',
+    },
+    LOG_ASSERT_HPP: None,
+    FPRIME_SVC_CMAKELISTS_TXT: None,
 }
 
 def backup_files(paths, backup_dir):
@@ -101,11 +141,14 @@ def generate(replacements):
         with open(TEMPLATES[fname][TMPL], 'r') as file:
             template_content = file.read()
 
-        # Create a template from the content
-        template = Template(template_content)
 
-        # Perform the substitution
-        result = template.substitute(replacements[fname])
+        # Perform the substitution if needed
+        if replacements[fname] is not None:
+            # Create a template from the content
+            template = Template(template_content)
+            result = template.substitute(replacements[fname])
+        else:
+            result = template_content
 
         # Save the modified content to the output file
         with open(TEMPLATES[fname][TARGET], 'w') as file:
@@ -119,11 +162,11 @@ def build_project(stats_output_dir):
 
     command = (f'rm -rf {LED_BLINKER_PATH}/build-* && '
                f'fprime-util generate -r {LED_BLINKER_PATH} -DBOARD=nucleo_h723zg -DCMAKE_GENERATOR=Ninja &&'
-               f'west build --build-dir {LED_BLINKER_PATH}/build-fprime-automatic-zephyr/ &&'
+               f'west build --build-dir {LED_BLINKER_PATH}/build-fprime-automatic-zephyr/ -t zephyr.elf &&'
                f'rm {LED_BLINKER_PATH}/build-fprime-automatic-zephyr/zephyr/zephyr.elf &&'
                f'ninja -C {LED_BLINKER_PATH}/build-fprime-automatic-zephyr zephyr.elf > {stats_output_dir}/compact.txt &&'
                f'echo rom_report && west build --build-dir {LED_BLINKER_PATH}/build-fprime-automatic-zephyr/ -t rom_report > {stats_output_dir}/rom_usage.txt &&'
-               f'echo ram_report west build --build-dir {LED_BLINKER_PATH}/build-fprime-automatic-zephyr/ -t ram_report > {stats_output_dir}/ram_usage.txt'
+               f'echo ram_report && west build --build-dir {LED_BLINKER_PATH}/build-fprime-automatic-zephyr/ -t ram_report > {stats_output_dir}/ram_usage.txt'
     )
 
     try:
@@ -136,6 +179,8 @@ def build_project(stats_output_dir):
         print(f"An error occurred: {str(e)}")
         raise e
 
+
+# RUN ALL BENCHMARKS
 all_targets = [TEMPLATES[fname][TARGET] for fname in TEMPLATES]
 
 backup_files(all_targets, BACKUP_PATH)
