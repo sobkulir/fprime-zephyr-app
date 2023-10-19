@@ -238,7 +238,6 @@ BASE_OBJ_REG_TRC_SER_RTGR_CMD_BUF = {
         },
     }
 }
-print(BASE_OBJ_REG_TRC_SER_RTGR_CMD_BUF)
 
 BASE_OBJ_REG_TRC_SER_RTGR_CMD_BUF_TLM = {
     **BASE,
@@ -461,11 +460,11 @@ def build_project(stats_output_dir):
 
     command = (f'rm -rf {LED_BLINKER_PATH}/build-*'
                f' && fprime-util generate -r {LED_BLINKER_PATH} -DBOARD=nucleo_h723zg -DCMAKE_GENERATOR=Ninja'
-               f' && west build --build-dir {LED_BLINKER_PATH}/build-fprime-automatic-zephyr/ -t zephyr.elf'
+               f' && fprime-util build -p {LED_BLINKER_PATH} -j16'
                f' && rm {LED_BLINKER_PATH}/build-fprime-automatic-zephyr/zephyr/zephyr.elf'
                f' && ninja -C {LED_BLINKER_PATH}/build-fprime-automatic-zephyr zephyr.elf > {stats_output_dir}/compact.txt'
-            #    f' && echo rom_report && west build --build-dir {LED_BLINKER_PATH}/build-fprime-automatic-zephyr/ -t rom_report > {stats_output_dir}/rom_usage.txt'
-            #    f' && echo ram_report && west build --build-dir {LED_BLINKER_PATH}/build-fprime-automatic-zephyr/ -t ram_report > {stats_output_dir}/ram_usage.txt'
+               f' && echo rom_report && west build --build-dir {LED_BLINKER_PATH}/build-fprime-automatic-zephyr/ -t rom_report > {stats_output_dir}/rom_usage.txt'
+               f' && echo ram_report && west build --build-dir {LED_BLINKER_PATH}/build-fprime-automatic-zephyr/ -t ram_report > {stats_output_dir}/ram_usage.txt'
     )
 
     try:
@@ -490,7 +489,12 @@ benchmarks = [
     BASE_OBJ_REG_TRC_SER_RTGR,
     BASE_OBJ_REG_TRC_SER_RTGR_CMD,
     BASE_OBJ_REG_TRC_SER_RTGR_CMD_BUF,
-    BASE_OBJ_REG_TRC_SER_RTGR_CMD_BUF_TLM]
+    BASE_OBJ_REG_TRC_SER_RTGR_CMD_BUF_TLM,
+    BASE_OBJ_REG_TRC_SER_RTGR_CMD_BUF_TLM_HEAP,
+    BASE_OBJ_REG_TRC_SER_RTGR_CMD_BUF_TLM_HEAP_CRC,
+    BASE_OBJ_REG_TRC_SER_RTGR_CMD_BUF_TLM_HEAP_CRC_LOG,
+    BASE_OBJ_REG_TRC_SER_RTGR_CMD_BUF_TLM_HEAP_CRC_LOG_ASRT
+]
 
 backup_files(templated_targets, BACKUP_PATH)
 

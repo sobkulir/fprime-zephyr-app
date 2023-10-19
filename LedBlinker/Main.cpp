@@ -79,9 +79,7 @@ static uint32_t total_allocated = 0;
 void on_heap_alloc(uintptr_t heap_id, void *mem, size_t bytes)
 {
     total_allocated += bytes;
-    // LOG_INF("Memory allocated from heap %" PRIuPTR " at %p, size %u, total %u", heap_id, mem, bytes, total_allocated);
-    printk("%u, %u\n", bytes, total_allocated);
-    // LOG_ERR("Heap allo %u, total %u", bytes, total_allocated);
+    LOG_INF("Memory allocated from heap %" PRIuPTR " at %p, size %u, total %u", heap_id, mem, bytes, total_allocated);
 }
 HEAP_LISTENER_ALLOC_DEFINE(my_listener, HEAP_ID_FROM_POINTER(&_system_heap), on_heap_alloc);
 

@@ -141,8 +141,11 @@ void setupTopology(const TopologyState& state) {
     };
 
     // In production, not being able to initialize the UART should probably be a fatal error.
-    FW_ASSERT(commUartDriver.configure(uart, &uart_cfg) == 0);
-    FW_ASSERT(led.configureDefaultState());
+    int ret = commUartDriver.configure(uart, &uart_cfg);
+    FW_ASSERT(ret == 0, "Failed to configure UART");
+    ret = led.configureDefaultState();
+    FW_ASSERT(ret == 0, "Failed to configure LED");
+
 
 }
 
