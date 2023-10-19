@@ -57,6 +57,8 @@ ENV LANGUAGE=en_US:en
 ENV LC_ALL=en_US.UTF-8
 
 # Install Python dependencies
+# There's a version fix for anytree needed to fix ram_report and rom_report in Zephyr
+# See: https://github.com/zephyrproject-rtos/zephyr/issues/60213
 RUN python3 -m pip install -U pip && \
     pip3 install -U wheel setuptools && \
     pip3 install \
@@ -64,6 +66,7 @@ RUN python3 -m pip install -U pip && \
     pip3 install \
         -r https://raw.githubusercontent.com/zephyrproject-rtos/zephyr/zephyr-v3.3.0/scripts/requirements.txt \
         west && \
+    pip3 uninstall -y anytree && pip3 install anytree==2.8.0 && \
     pip3 check
 
 # Create 'user' account
