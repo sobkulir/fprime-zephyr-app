@@ -67,12 +67,26 @@ for fobj in FILES:
 for fobj in FILES:
     result['FileDownlink']['rom'][fobj['name']][0] += result['FileDownlinkPorts']['rom'][fobj['name']][0]
 
+# Little witchcraft
+COMPONENTS.append(['ObjBase', None])
+result['ObjBase'] = {
+    'rom': {'Baseline': [134], 'Dev': [116], 'Min': [28]},
+    'ram': {'Baseline': [84], 'Dev': [84], 'Min': [4]}
+    }
 del result['FileDownlinkPorts']
+
+
 print(result)
 
 for comp, compMangled in COMPONENTS:
     if comp == 'FileDownlinkPorts':
         continue
-
-    print(f"{comp} & {sum(result[comp]['rom']['Dev'])} & {sum(result[comp]['rom']['Min'])} & {sum(result[comp]['ram']['Dev'])} & {sum(result[comp]['ram']['Min'])}", end='')
+    print(f"{comp} "
+          f" & {sum(result[comp]['ram']['Baseline'])}"
+          f" & {sum(result[comp]['ram']['Dev'])}"
+          f" & {sum(result[comp]['ram']['Min'])}"
+          f" & {sum(result[comp]['rom']['Baseline'])}"
+          f" & {sum(result[comp]['rom']['Dev'])}"
+          f" & {sum(result[comp]['rom']['Min'])}",
+          end='')
     print(' \\\\')

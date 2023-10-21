@@ -84,6 +84,6 @@ plt.xticks([RAM_X, FLASH_X], ['RAM', 'Flash'], fontsize=13, fontweight='semibold
 
 plt.grid(axis='x')
 
-# plt.savefig('ram_flash_opt.pdf', bbox_inches='tight')
+plt.savefig('ram_flash_opt.pdf', bbox_inches='tight')
 plt.show()
 
