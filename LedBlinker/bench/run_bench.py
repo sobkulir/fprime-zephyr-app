@@ -24,6 +24,7 @@ INSTANCES_FPP = 'instances.fpp'
 TOPOLOGY_FPP = 'topology.fpp'
 LOG_ASSERT_HPP = 'LogAssert.hpp'
 FPRIME_SVC_CMAKELISTS_TXT = 'FprimeSvcCMakeLists.txt'
+FPRIME_FW_CMAKELISTS_TXT = 'FprimeFwCMakeLists.txt'
 
 TEMPLATES = {
     AC_CONSTANTS_FPP: {
@@ -68,6 +69,10 @@ TEMPLATES = {
         TMPL: os.path.join(TMPL_PATH, FPRIME_SVC_CMAKELISTS_TXT + '.tmpl'),
         TARGET: os.path.join(F_PRIME_PATH, 'Svc', 'CMakeLists.txt'),
     },
+    FPRIME_FW_CMAKELISTS_TXT: {
+        TMPL: os.path.join(TMPL_PATH, FPRIME_FW_CMAKELISTS_TXT + '.tmpl'),
+        TARGET: os.path.join(F_PRIME_PATH, 'Fw', 'CMakeLists.txt'),
+    },
 }
 
 # Define the replacement values
@@ -107,31 +112,16 @@ BASE = {
     },
     LOG_ASSERT_HPP: None,
     FPRIME_SVC_CMAKELISTS_TXT: None,
+    FPRIME_FW_CMAKELISTS_TXT: None,
 }
 
-BASE_OBJ = {
+BASE_REG = {
     **BASE,
     **{
-        'tag': 'base,obj',
+        'tag': 'base,reg',
 
         FP_CONFIG_H: {
-            'FW_OBJECT_NAMES': '0',
-            'FW_OBJECT_REGISTRATION': '1',
-            'FW_PORT_TRACING': '1',
-            'FW_ENABLE_TEXT_LOGGING': '1',
-            'FW_PORT_SERIALIZATION': '1',
-            'FW_ASSERT_LEVEL': 'FW_FILENAME_ASSERT',
-        },
-    }
-}
-
-BASE_OBJ_REG = {
-    **BASE,
-    **{
-        'tag': 'base,obj,reg',
-
-        FP_CONFIG_H: {
-            'FW_OBJECT_NAMES': '0',
+            'FW_OBJECT_NAMES': '1',
             'FW_OBJECT_REGISTRATION': '0',
             'FW_PORT_TRACING': '1',
             'FW_ENABLE_TEXT_LOGGING': '1',
@@ -141,13 +131,13 @@ BASE_OBJ_REG = {
     }
 }
 
-BASE_OBJ_REG_TRC = {
+BASE_REG_TRC = {
     **BASE,
     **{
-        'tag': 'base,obj,reg,trc',
+        'tag': 'base,reg,trc',
 
         FP_CONFIG_H: {
-            'FW_OBJECT_NAMES': '0',
+            'FW_OBJECT_NAMES': '1',
             'FW_OBJECT_REGISTRATION': '0',
             'FW_PORT_TRACING': '0',
             'FW_ENABLE_TEXT_LOGGING': '1',
@@ -157,13 +147,13 @@ BASE_OBJ_REG_TRC = {
     }
 }
 
-BASE_OBJ_REG_TRC_SER = {
+BASE_REG_TRC_SER = {
     **BASE,
     **{
-        'tag': 'base,obj,reg,trc,ser',
+        'tag': 'base,reg,trc,ser',
 
         FP_CONFIG_H: {
-            'FW_OBJECT_NAMES': '0',
+            'FW_OBJECT_NAMES': '1',
             'FW_OBJECT_REGISTRATION': '0',
             'FW_PORT_TRACING': '0',
             'FW_ENABLE_TEXT_LOGGING': '1',
@@ -173,10 +163,10 @@ BASE_OBJ_REG_TRC_SER = {
     }
 }
 
-BASE_OBJ_REG_TRC_SER_RTGR = {
+BASE_REG_TRC_SER_RTGR = {
     **BASE,
     **{
-        'tag': 'base,obj,reg,trc,ser,rtgr',
+        'tag': 'base,reg,trc,ser,rtgr',
         AC_CONSTANTS_FPP: {
             'PassiveRateGroupOutputPorts': '4',
             'CmdDispatcherComponentCommandPorts': '30',
@@ -184,7 +174,7 @@ BASE_OBJ_REG_TRC_SER_RTGR = {
         },
 
         FP_CONFIG_H: {
-            'FW_OBJECT_NAMES': '0',
+            'FW_OBJECT_NAMES': '1',
             'FW_OBJECT_REGISTRATION': '0',
             'FW_PORT_TRACING': '0',
             'FW_ENABLE_TEXT_LOGGING': '1',
@@ -194,10 +184,10 @@ BASE_OBJ_REG_TRC_SER_RTGR = {
     }
 }
 
-BASE_OBJ_REG_TRC_SER_RTGR_CMD = {
+BASE_REG_TRC_SER_RTGR_CMD = {
     **BASE,
     **{
-        'tag': 'base,obj,reg,trc,ser,rtgr,cmd',
+        'tag': 'base,reg,trc,ser,rtgr,cmd',
         AC_CONSTANTS_FPP: {
             'PassiveRateGroupOutputPorts': '4',
             'CmdDispatcherComponentCommandPorts': '10',
@@ -205,7 +195,7 @@ BASE_OBJ_REG_TRC_SER_RTGR_CMD = {
         },
 
         FP_CONFIG_H: {
-            'FW_OBJECT_NAMES': '0',
+            'FW_OBJECT_NAMES': '1',
             'FW_OBJECT_REGISTRATION': '0',
             'FW_PORT_TRACING': '0',
             'FW_ENABLE_TEXT_LOGGING': '1',
@@ -215,10 +205,10 @@ BASE_OBJ_REG_TRC_SER_RTGR_CMD = {
     }
 }
 
-BASE_OBJ_REG_TRC_SER_RTGR_CMD_BUF = {
+BASE_REG_TRC_SER_RTGR_CMD_BUF = {
     **BASE,
     **{
-        'tag': 'base,obj,reg,trc,ser,rtgr,cmd,buf',
+        'tag': 'base,reg,trc,ser,rtgr,cmd,buf',
         AC_CONSTANTS_FPP: {
             'PassiveRateGroupOutputPorts': '4',
             'CmdDispatcherComponentCommandPorts': '10',
@@ -226,7 +216,7 @@ BASE_OBJ_REG_TRC_SER_RTGR_CMD_BUF = {
         },
 
         FP_CONFIG_H: {
-            'FW_OBJECT_NAMES': '0',
+            'FW_OBJECT_NAMES': '1',
             'FW_OBJECT_REGISTRATION': '0',
             'FW_PORT_TRACING': '0',
             'FW_ENABLE_TEXT_LOGGING': '1',
@@ -239,10 +229,10 @@ BASE_OBJ_REG_TRC_SER_RTGR_CMD_BUF = {
     }
 }
 
-BASE_OBJ_REG_TRC_SER_RTGR_CMD_BUF_TLM = {
+BASE_REG_TRC_SER_RTGR_CMD_BUF_TLM = {
     **BASE,
     **{
-        'tag': 'base,obj,reg,trc,ser,rtgr,cmd,buf,tlm',
+        'tag': 'base,reg,trc,ser,rtgr,cmd,buf,tlm',
         AC_CONSTANTS_FPP: {
             'PassiveRateGroupOutputPorts': '4',
             'CmdDispatcherComponentCommandPorts': '10',
@@ -250,7 +240,7 @@ BASE_OBJ_REG_TRC_SER_RTGR_CMD_BUF_TLM = {
         },
 
         FP_CONFIG_H: {
-            'FW_OBJECT_NAMES': '0',
+            'FW_OBJECT_NAMES': '1',
             'FW_OBJECT_REGISTRATION': '0',
             'FW_PORT_TRACING': '0',
             'FW_ENABLE_TEXT_LOGGING': '1',
@@ -266,10 +256,10 @@ BASE_OBJ_REG_TRC_SER_RTGR_CMD_BUF_TLM = {
     }
 }
 
-BASE_OBJ_REG_TRC_SER_RTGR_CMD_BUF_TLM_HEAP = {
+BASE_REG_TRC_SER_RTGR_CMD_BUF_TLM_HEAP = {
     **BASE,
     **{
-        'tag': 'base,obj,reg,trc,ser,rtgr,cmd,buf,tlm,heap',
+        'tag': 'base,reg,trc,ser,rtgr,cmd,buf,tlm,heap',
         AC_CONSTANTS_FPP: {
             'PassiveRateGroupOutputPorts': '4',
             'CmdDispatcherComponentCommandPorts': '10',
@@ -277,7 +267,7 @@ BASE_OBJ_REG_TRC_SER_RTGR_CMD_BUF_TLM_HEAP = {
         },
 
         FP_CONFIG_H: {
-            'FW_OBJECT_NAMES': '0',
+            'FW_OBJECT_NAMES': '1',
             'FW_OBJECT_REGISTRATION': '0',
             'FW_PORT_TRACING': '0',
             'FW_ENABLE_TEXT_LOGGING': '1',
@@ -296,10 +286,10 @@ BASE_OBJ_REG_TRC_SER_RTGR_CMD_BUF_TLM_HEAP = {
     }
 }
 
-BASE_OBJ_REG_TRC_SER_RTGR_CMD_BUF_TLM_HEAP_CRC = {
+BASE_REG_TRC_SER_RTGR_CMD_BUF_TLM_HEAP_CRC = {
     **BASE,
     **{
-        'tag': 'base,obj,reg,trc,ser,rtgr,cmd,buf,tlm,heap,crc',
+        'tag': 'base,reg,trc,ser,rtgr,cmd,buf,tlm,heap,crc',
         AC_CONSTANTS_FPP: {
             'PassiveRateGroupOutputPorts': '4',
             'CmdDispatcherComponentCommandPorts': '10',
@@ -307,7 +297,7 @@ BASE_OBJ_REG_TRC_SER_RTGR_CMD_BUF_TLM_HEAP_CRC = {
         },
 
         FP_CONFIG_H: {
-            'FW_OBJECT_NAMES': '0',
+            'FW_OBJECT_NAMES': '1',
             'FW_OBJECT_REGISTRATION': '0',
             'FW_PORT_TRACING': '0',
             'FW_ENABLE_TEXT_LOGGING': '1',
@@ -326,10 +316,49 @@ BASE_OBJ_REG_TRC_SER_RTGR_CMD_BUF_TLM_HEAP_CRC = {
     }
 }
 
-BASE_OBJ_REG_TRC_SER_RTGR_CMD_BUF_TLM_HEAP_CRC_LOG = {
+BASE_REG_TRC_SER_RTGR_CMD_BUF_TLM_HEAP_CRC_LOG = {
     **BASE,
     **{
-        'tag': 'base,obj,reg,trc,ser,rtgr,cmd,buf,tlm,heap,crc,log',
+        'tag': 'base,reg,trc,ser,rtgr,cmd,buf,tlm,heap,crc,log',
+        AC_CONSTANTS_FPP: {
+            'PassiveRateGroupOutputPorts': '4',
+            'CmdDispatcherComponentCommandPorts': '10',
+            'StaticMemoryAllocations': '2',
+        },
+
+        FP_CONFIG_H: {
+            'FW_OBJECT_NAMES': '1',
+            'FW_OBJECT_REGISTRATION': '0',
+            'FW_PORT_TRACING': '0',
+            'FW_ENABLE_TEXT_LOGGING': '0',
+            'FW_PORT_SERIALIZATION': '0',
+            'FW_ASSERT_LEVEL': 'FW_FILEID_ASSERT',
+        },
+        STATIC_MEMORY_CONFIG_HPP: {
+            'STATIC_MEMORY_ALLOCATION_SIZE': 1024,
+        },
+        TLM_CHAN_IMPL_CFG_HPP: {
+            'TLMCHAN_HASH_BUCKETS': 35,
+        },
+        PRJ_CONF: {
+            'CONFIG_HEAP_MEM_POOL_SIZE': 35000,
+        },
+        INSTANCES_FPP: {
+            'COMMENT_OUT_TEXT_LOGGER': '#',
+        },
+        TOPOLOGY_FPP: {
+            'COMMENT_OUT_TEXT_LOGGER': '#',
+        },
+        SETTINGS_INI: {
+            'FPRIME_ENABLE_TEXT_LOGGERS': 'OFF',
+        },
+    }
+}
+
+BASE_REG_TRC_SER_RTGR_CMD_BUF_TLM_HEAP_CRC_LOG_OBJ = {
+    **BASE,
+    **{
+        'tag': 'base,reg,trc,ser,rtgr,cmd,buf,tlm,heap,crc,log,obj',
         AC_CONSTANTS_FPP: {
             'PassiveRateGroupOutputPorts': '4',
             'CmdDispatcherComponentCommandPorts': '10',
@@ -365,10 +394,11 @@ BASE_OBJ_REG_TRC_SER_RTGR_CMD_BUF_TLM_HEAP_CRC_LOG = {
     }
 }
 
-BASE_OBJ_REG_TRC_SER_RTGR_CMD_BUF_TLM_HEAP_CRC_LOG_ASRT = {
+
+BASE_REG_TRC_SER_RTGR_CMD_BUF_TLM_HEAP_CRC_LOG_OBJ_ASRT = {
     **BASE,
     **{
-        'tag': 'base,obj,reg,trc,ser,rtgr,cmd,buf,tlm,heap,crc,log,asrt',
+        'tag': 'base,reg,trc,ser,rtgr,cmd,buf,tlm,heap,crc,log,obj,asrt',
         AC_CONSTANTS_FPP: {
             'PassiveRateGroupOutputPorts': '4',
             'CmdDispatcherComponentCommandPorts': '10',
@@ -465,6 +495,7 @@ def build_project(stats_output_dir):
                f' && ninja -C {LED_BLINKER_PATH}/build-fprime-automatic-zephyr zephyr.elf > {stats_output_dir}/compact.txt'
                f' && echo rom_report && west build --build-dir {LED_BLINKER_PATH}/build-fprime-automatic-zephyr/ -t rom_report > {stats_output_dir}/rom_usage.txt'
                f' && echo ram_report && west build --build-dir {LED_BLINKER_PATH}/build-fprime-automatic-zephyr/ -t ram_report > {stats_output_dir}/ram_usage.txt'
+               f' && cp {LED_BLINKER_PATH}/build-fprime-automatic-zephyr/zephyr/zephyr.elf {stats_output_dir}/zephyr.elf'
     )
 
     try:
@@ -481,19 +512,19 @@ def build_project(stats_output_dir):
 # RUN ALL BENCHMARKS
 templated_targets = [TEMPLATES[fname][TARGET] for fname in TEMPLATES]
 benchmarks = [
-    BASE,
-    BASE_OBJ,
-    BASE_OBJ_REG,
-    BASE_OBJ_REG_TRC,
-    BASE_OBJ_REG_TRC_SER,
-    BASE_OBJ_REG_TRC_SER_RTGR,
-    BASE_OBJ_REG_TRC_SER_RTGR_CMD,
-    BASE_OBJ_REG_TRC_SER_RTGR_CMD_BUF,
-    BASE_OBJ_REG_TRC_SER_RTGR_CMD_BUF_TLM,
-    BASE_OBJ_REG_TRC_SER_RTGR_CMD_BUF_TLM_HEAP,
-    BASE_OBJ_REG_TRC_SER_RTGR_CMD_BUF_TLM_HEAP_CRC,
-    BASE_OBJ_REG_TRC_SER_RTGR_CMD_BUF_TLM_HEAP_CRC_LOG,
-    BASE_OBJ_REG_TRC_SER_RTGR_CMD_BUF_TLM_HEAP_CRC_LOG_ASRT
+    BASE, # Baseline
+    BASE_REG,
+    BASE_REG_TRC,
+    BASE_REG_TRC_SER,
+    BASE_REG_TRC_SER_RTGR,
+    BASE_REG_TRC_SER_RTGR_CMD,
+    BASE_REG_TRC_SER_RTGR_CMD_BUF,
+    BASE_REG_TRC_SER_RTGR_CMD_BUF_TLM,
+    BASE_REG_TRC_SER_RTGR_CMD_BUF_TLM_HEAP, # Dev
+    BASE_REG_TRC_SER_RTGR_CMD_BUF_TLM_HEAP_CRC,
+    BASE_REG_TRC_SER_RTGR_CMD_BUF_TLM_HEAP_CRC_LOG,
+    BASE_REG_TRC_SER_RTGR_CMD_BUF_TLM_HEAP_CRC_LOG_OBJ,
+    BASE_REG_TRC_SER_RTGR_CMD_BUF_TLM_HEAP_CRC_LOG_OBJ_ASRT # Min
 ]
 
 backup_files(templated_targets, BACKUP_PATH)
