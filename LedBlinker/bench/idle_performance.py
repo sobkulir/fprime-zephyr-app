@@ -129,8 +129,8 @@ def get_cycles_per_thread(input_text):
         res[thread_name] = cpu_cycles
     return res
 
-base = get_cycles_per_thread(base_uplink)
-after_10_seconds = get_cycles_per_thread(after_10_second_uplink)
+base = get_cycles_per_thread(input_base)
+after_10_seconds = get_cycles_per_thread(input_after_10_seconds)
 
 diff = { thread_name: after - base[thread_name] for thread_name, after in after_10_seconds.items()}
 
@@ -172,8 +172,25 @@ total = sum(diff.values())
 # Bench fdown_uart_send result: 80.58, Raw: 1774507970                                                                                                          
 # Bench fdown_file_read result: 16.89, Raw: 372066617
 
-for thread_name, cycles in diff.items():
-    print(f"{thread_name}: {100 * cycles / total}%")
+name_mapping = {
+    'T_tlmSend': 'TlmChan',
+    'T_prmDb': 'PrmDb',
+    'T_fileUplink': 'FileUplink',
+    'T_fileManager': 'FileManager',
+    'T_fileDownlink': 'FileDownlink',
+    'T_eventLogger': 'EventLogger',
+    'T_cmdSeq': 'CmdSequencer',
+    'T_cmdDisp': 'CmdDispatcher',
+    'thread_analyzer': 'ThreadAnalyzer',
+    'logging': 'Logging',
+    'idle': 'Idle',
+    'main': 'Main',
+    'ISR0': 'ISR0'
+}
+for thread_name, cycles in sorted(diff.items(), key=lambda item: item[1], reverse=True):
+    print(f"{name_mapping[thread_name]} & {round(100 * cycles / total, 4)}\\% \\\\")
+
+print(f"\\textbf{'{'}Total{'}'} & {100 * (1 - diff['idle'] / total)}\\% \\\\")
 # # Find total CPU cycles used
 # for match in re.finditer(total_cycles_pattern, input_text):
 #     thread_name = match.group('thread_name')
