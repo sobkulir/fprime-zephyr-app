@@ -33,6 +33,11 @@ typedef U16 FwBuffSizeType;
 typedef I32 FwEnumStoreType;
 #define PRI_FwEnumStoreType PRId32
 
+// Custom flag, enable performance benchmarks
+#ifndef PERF_ENABLED
+#define PERF_ENABLED $PERF_ENABLED
+#endif
+
 // Define enumeration for Time base types
 // Note: maintaining C-style
 typedef enum {
