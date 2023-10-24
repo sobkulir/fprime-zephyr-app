@@ -71,7 +71,8 @@ def bytes_to_kilobytes(bytes, pos):
 # Set the custom tick formatter for y-axis
 plt.gca().yaxis.set_major_formatter(FuncFormatter(bytes_to_kilobytes))
 
-plt.text(-0.1, ram_values[0] + 10000, '[Size]', fontsize=13, fontweight='bold', ha='right')
+# plt.text(-0.1, ram_values[0] + 10000, '[Total Footprint]', fontsize=13, fontweight='bold', ha='right')
+plt.ylabel('Total Footprint', labelpad=12, fontsize=15, fontweight='bold')
 plt.yticks([
   ram_values[0],
   *ram_values[2:],

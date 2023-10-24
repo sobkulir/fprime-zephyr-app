@@ -80,7 +80,9 @@ plt.yticks([
   0,
   ], fontsize=13)
 
-plt.text(-0.1, flash_prefix_sums[-1] + 16000, '[Size]', fontsize=13, fontweight='bold', ha='right')
+# plt.text(-0.1, flash_prefix_sums[-1] + 16000, '[Size]', fontsize=13, fontweight='bold', ha='right')
+plt.ylabel('Total Footprint', labelpad=12, fontsize=15, fontweight='bold')
+
 plt.xticks([RAM_X, FLASH_X], ['RAM', 'Flash'], fontsize=13, fontweight='semibold')
 
 plt.grid(axis='x')
