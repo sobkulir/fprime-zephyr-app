@@ -24,6 +24,9 @@ INSTANCES_FPP = 'instances.fpp'
 TOPOLOGY_FPP = 'topology.fpp'
 LOG_ASSERT_HPP = 'LogAssert.hpp'
 FPRIME_SVC_CMAKELISTS_TXT = 'FprimeSvcCMakeLists.txt'
+FPRIME_SVC_FILE_DOWNLINK_CPP = 'FprimeSvcFileDownlink.cpp'
+FPRIME_SVC_FILE_UPLINK_CPP = 'FprimeSvcFileUplink.cpp'
+FPRIME_SVC_TLM_CHAN_CPP = 'FprimeSvcTlmChan.cpp'
 FPRIME_FW_CMAKELISTS_TXT = 'FprimeFwCMakeLists.txt'
 
 TEMPLATES = {
@@ -73,6 +76,20 @@ TEMPLATES = {
         TMPL: os.path.join(TMPL_PATH, FPRIME_FW_CMAKELISTS_TXT + '.tmpl'),
         TARGET: os.path.join(F_PRIME_PATH, 'Fw', 'CMakeLists.txt'),
     },
+
+    # F Prime patches for performance benchmarks
+    FPRIME_SVC_FILE_UPLINK_CPP: {
+        TMPL: os.path.join(TMPL_PATH, FPRIME_SVC_FILE_UPLINK_CPP + '.tmpl'),
+        TARGET: os.path.join(F_PRIME_PATH, 'Svc', 'FileUplink/FileUplink.cpp'),
+    },
+    FPRIME_SVC_FILE_DOWNLINK_CPP: {
+        TMPL: os.path.join(TMPL_PATH, FPRIME_SVC_FILE_DOWNLINK_CPP + '.tmpl'),
+        TARGET: os.path.join(F_PRIME_PATH, 'Svc', 'FileDownlink/FileDownlink.cpp'),
+    },
+    FPRIME_SVC_TLM_CHAN_CPP: {
+        TMPL: os.path.join(TMPL_PATH, FPRIME_SVC_TLM_CHAN_CPP + '.tmpl'),
+        TARGET: os.path.join(F_PRIME_PATH, 'Svc', 'TlmChan/TlmChan.cpp'),
+    },
 }
 
 # Define the replacement values
@@ -113,6 +130,9 @@ BASE = {
     LOG_ASSERT_HPP: None,
     FPRIME_SVC_CMAKELISTS_TXT: None,
     FPRIME_FW_CMAKELISTS_TXT: None,
+    FPRIME_SVC_FILE_UPLINK_CPP: None,
+    FPRIME_SVC_FILE_DOWNLINK_CPP: None,
+    FPRIME_SVC_TLM_CHAN_CPP: None,
 }
 
 BASE_REG = {
@@ -121,6 +141,7 @@ BASE_REG = {
         'tag': 'base,reg',
 
         FP_CONFIG_H: {
+            'PERF_ENABLED': '0',
             'FW_OBJECT_NAMES': '1',
             'FW_OBJECT_REGISTRATION': '0',
             'FW_PORT_TRACING': '1',
@@ -137,6 +158,7 @@ BASE_REG_TRC = {
         'tag': 'base,reg,trc',
 
         FP_CONFIG_H: {
+            'PERF_ENABLED': '0',
             'FW_OBJECT_NAMES': '1',
             'FW_OBJECT_REGISTRATION': '0',
             'FW_PORT_TRACING': '0',
@@ -153,6 +175,7 @@ BASE_REG_TRC_SER = {
         'tag': 'base,reg,trc,ser',
 
         FP_CONFIG_H: {
+            'PERF_ENABLED': '0',
             'FW_OBJECT_NAMES': '1',
             'FW_OBJECT_REGISTRATION': '0',
             'FW_PORT_TRACING': '0',
@@ -174,6 +197,7 @@ BASE_REG_TRC_SER_RTGR = {
         },
 
         FP_CONFIG_H: {
+            'PERF_ENABLED': '0',
             'FW_OBJECT_NAMES': '1',
             'FW_OBJECT_REGISTRATION': '0',
             'FW_PORT_TRACING': '0',
@@ -195,6 +219,7 @@ BASE_REG_TRC_SER_RTGR_CMD = {
         },
 
         FP_CONFIG_H: {
+            'PERF_ENABLED': '0',
             'FW_OBJECT_NAMES': '1',
             'FW_OBJECT_REGISTRATION': '0',
             'FW_PORT_TRACING': '0',
@@ -216,6 +241,7 @@ BASE_REG_TRC_SER_RTGR_CMD_BUF = {
         },
 
         FP_CONFIG_H: {
+            'PERF_ENABLED': '0',
             'FW_OBJECT_NAMES': '1',
             'FW_OBJECT_REGISTRATION': '0',
             'FW_PORT_TRACING': '0',
@@ -240,6 +266,7 @@ BASE_REG_TRC_SER_RTGR_CMD_BUF_TLM = {
         },
 
         FP_CONFIG_H: {
+            'PERF_ENABLED': '0',
             'FW_OBJECT_NAMES': '1',
             'FW_OBJECT_REGISTRATION': '0',
             'FW_PORT_TRACING': '0',
@@ -267,6 +294,7 @@ BASE_REG_TRC_SER_RTGR_CMD_BUF_TLM_HEAP = {
         },
 
         FP_CONFIG_H: {
+            'PERF_ENABLED': '0',
             'FW_OBJECT_NAMES': '1',
             'FW_OBJECT_REGISTRATION': '0',
             'FW_PORT_TRACING': '0',
@@ -297,6 +325,7 @@ BASE_REG_TRC_SER_RTGR_CMD_BUF_TLM_HEAP_CRC = {
         },
 
         FP_CONFIG_H: {
+            'PERF_ENABLED': '0',
             'FW_OBJECT_NAMES': '1',
             'FW_OBJECT_REGISTRATION': '0',
             'FW_PORT_TRACING': '0',
@@ -327,6 +356,7 @@ BASE_REG_TRC_SER_RTGR_CMD_BUF_TLM_HEAP_CRC_LOG = {
         },
 
         FP_CONFIG_H: {
+            'PERF_ENABLED': '0',
             'FW_OBJECT_NAMES': '1',
             'FW_OBJECT_REGISTRATION': '0',
             'FW_PORT_TRACING': '0',
@@ -366,6 +396,7 @@ BASE_REG_TRC_SER_RTGR_CMD_BUF_TLM_HEAP_CRC_LOG_OBJ = {
         },
 
         FP_CONFIG_H: {
+            'PERF_ENABLED': '0',
             'FW_OBJECT_NAMES': '0',
             'FW_OBJECT_REGISTRATION': '0',
             'FW_PORT_TRACING': '0',
@@ -406,6 +437,7 @@ BASE_REG_TRC_SER_RTGR_CMD_BUF_TLM_HEAP_CRC_LOG_OBJ_ASRT = {
         },
 
         FP_CONFIG_H: {
+            'PERF_ENABLED': '0',
             'FW_OBJECT_NAMES': '0',
             'FW_OBJECT_REGISTRATION': '0',
             'FW_PORT_TRACING': '0',
@@ -434,34 +466,37 @@ BASE_REG_TRC_SER_RTGR_CMD_BUF_TLM_HEAP_CRC_LOG_OBJ_ASRT = {
     }
 }
 
+BASE_PERF_BENCH = {
+    **BASE,
+    **{
+        'tag': 'base,perf_bench',
 
-def backup_files(paths, backup_dir):
-    """
-    Back up the specified files to the backup directory.
-    
-    Args:
-        paths (list): A list of file paths to be backed up.
-        backup_dir (str): The directory where backup files will be stored.
-    """
+        FP_CONFIG_H: {
+            'PERF_ENABLED': '1',
+            'FW_OBJECT_NAMES': '1',
+            'FW_OBJECT_REGISTRATION': '1',
+            'FW_PORT_TRACING': '1',
+            'FW_ENABLE_TEXT_LOGGING': '1',
+            'FW_PORT_SERIALIZATION': '1',
+            'FW_ASSERT_LEVEL': 'FW_FILENAME_ASSERT',
+        },
+    }
+}
+
+
+def backup_files(fileObjList, backup_dir):
+
     if not os.path.exists(backup_dir):
         os.makedirs(backup_dir)
 
-    for path in paths:
-        file_name = os.path.basename(path)
-        shutil.copy2(path, os.path.join(backup_dir, file_name))
+    for file in fileObjList:
+        shutil.copy2(file['path'], os.path.join(backup_dir, file['name']))
 
-def restore_backups(paths, backup_dir):
-    """
-    Restore files from the backup directory to their original locations.
-    
-    Args:
-        paths (list): A list of file paths to be restored.
-        backup_dir (str): The directory where backup files are be stored.
-    """
+def restore_backups(fileObjList, backup_dir):
 
-    for path in paths:
-        file_name = os.path.basename(path)
-        shutil.copy2(os.path.join(backup_dir, file_name), path)
+
+    for file in fileObjList:
+        shutil.copy2(os.path.join(backup_dir, file['name']), file['path'])
 
 def generate(replacements):
     for fname in TEMPLATES.keys():
@@ -510,8 +545,8 @@ def build_project(stats_output_dir):
 
 
 # RUN ALL BENCHMARKS
-templated_targets = [TEMPLATES[fname][TARGET] for fname in TEMPLATES]
-benchmarks = [
+templated_files = [{'name': fname, 'path': TEMPLATES[fname][TARGET]} for fname in TEMPLATES]
+benchmarks_ram_flash = [
     BASE, # Baseline
     BASE_REG,
     BASE_REG_TRC,
@@ -527,12 +562,34 @@ benchmarks = [
     BASE_REG_TRC_SER_RTGR_CMD_BUF_TLM_HEAP_CRC_LOG_OBJ_ASRT # Min
 ]
 
-backup_files(templated_targets, BACKUP_PATH)
+
+import argparse
+
+parser = argparse.ArgumentParser(description="Runs RAM/Flash benchmarks, use -p for performance benchmarks")
+parser.add_argument("-p", action="store_true", help="Compile performance benchmarks")
+parser.add_argument("-r", action="store_true", help="Restore backups")
+args = parser.parse_args()
+
+# For performance backups, just generate
+if args.p:
+    backup_files(templated_files, BACKUP_PATH)
+    generate(BASE_PERF_BENCH)
+    exit()
+
+
+## Just restore
+if args.r:
+    restore_backups(templated_files, BACKUP_PATH)
+    exit()
+    
+
+## Run RAM/Flash benchmarks
+backup_files(templated_files, BACKUP_PATH)
 
 try:
-    for bench in benchmarks:
+    for bench in benchmarks_ram_flash:
         print('Generating benchmark: ' + bench['tag'])
         generate(bench)
         build_project(os.path.join(REPORT_PATH, bench['tag']))
 finally:
-    restore_backups(templated_targets, BACKUP_PATH)
+    restore_backups(templated_files, BACKUP_PATH)
